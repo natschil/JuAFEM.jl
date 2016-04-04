@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="no-js ie6"><![endif]-->
+<!--[if IE 7 ]><html class="no-js ie7"><![endif]-->
+<!--[if IE 8 ]><html class="no-js ie8"><![endif]-->
+<!--[if IE 9 ]><html class="no-js ie9"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    
+      
+        <title>Main types - JuaFEM.jl</title>
+      
+      
+      
+      
+    
+    <meta property="og:url" content="None">
+    <meta property="og:title" content="JuaFEM.jl">
+    <meta property="og:image" content="None/../../">
+    <meta name="apple-mobile-web-app-title" content="JuaFEM.jl">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../None">
+    <link rel="icon" type="image/x-icon" href="../../None">
+    <style>
+      @font-face {
+      	font-family: 'Icon';
+      	src: url('../../assets/fonts/icon.eot?52m981');
+      	src: url('../../assets/fonts/icon.eot?#iefix52m981')
+               format('embedded-opentype'),
+      		   url('../../assets/fonts/icon.woff?52m981')
+               format('woff'),
+      		   url('../../assets/fonts/icon.ttf?52m981')
+               format('truetype'),
+      		   url('../../assets/fonts/icon.svg?52m981#icon')
+               format('svg');
+      	font-weight: normal;
+      	font-style: normal;
+      }
+    </style>
+    <link rel="stylesheet" href="../../assets/stylesheets/application-54f87043f3.css">
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/palettes-05ab2406df.css">
+    
+    
+      
+      
+      
+      <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu+Mono">
+      <style>
+        body, input {
+          font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+        }
+        pre, code {
+          font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+        }
+      </style>
+    
+    
+      <link rel="stylesheet" href="../../assets/Documenter.css">
+    
+    <script src="../../assets/javascripts/modernizr-4ab42b99fd.js"></script>
+    
+  </head>
+  
+  
+  
+  <body class="palette-primary-indigo palette-accent-blue">
+    
+      
+      
+    
+    <div class="backdrop">
+      <div class="backdrop-paper"></div>
+    </div>
+    <input class="toggle" type="checkbox" id="toggle-drawer">
+    <input class="toggle" type="checkbox" id="toggle-search">
+    <label class="toggle-button overlay" for="toggle-drawer"></label>
+    <header class="header">
+      <nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        
+          <span class="path">
+            
+              
+                API <i class="icon icon-link"></i>
+              
+            
+          </span>
+        
+        Main types
+      </div>
+    </div>
+    
+    
+    <div class="button button-search" role="button" aria-label="Search">
+      <label class="toggle-button icon icon-search" title="Search" for="toggle-search"></label>
+    </div>
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+    </header>
+    <main class="main">
+      
+      <div class="drawer">
+        <nav aria-label="Navigation">
+  
+  <a href="https://github.com/KristofferC/JuAFEM.jl" class="project">
+    <div class="banner">
+      
+      <div class="name">
+        <strong>
+          JuaFEM.jl
+          <span class="version">
+            
+          </span>
+        </strong>
+        
+          <br>
+          KristofferC/JuAFEM.jl
+        
+      </div>
+    </div>
+  </a>
+  <div class="scrollable">
+    <div class="wrapper">
+      
+        <ul class="repo">
+          <li class="repo-download">
+            
+            <a href="https://github.com/KristofferC/JuAFEM.jl/archive/master.zip" target="_blank" title="Download" data-action="download">
+              <i class="icon icon-download"></i> Download
+            </a>
+          </li>
+          <li class="repo-stars">
+            <a href="https://github.com/KristofferC/JuAFEM.jl/stargazers" target="_blank" title="Stargazers" data-action="star">
+              <i class="icon icon-star"></i> Stars
+              <span class="count">&ndash;</span>
+            </a>
+          </li>
+        </ul>
+        <hr>
+      
+      <div class="toc">
+        <ul>
+          
+            
+  <li>
+    <a class="" title="Introduction" href="../..">
+      Introduction
+    </a>
+    
+  </li>
+
+          
+            
+  <li>
+    <span class="section">User guide</span>
+    <ul>
+      
+        
+  <li>
+    <a class="" title="Installation" href="../../man/installation/">
+      Installation
+    </a>
+    
+  </li>
+
+      
+        
+  <li>
+    <a class="" title="Basic usage" href="../../man/basic_usage/">
+      Basic usage
+    </a>
+    
+  </li>
+
+      
+    </ul>
+  </li>
+
+          
+            
+  <li>
+    <span class="section">API</span>
+    <ul>
+      
+        
+  <li>
+    <a class="current" title="Main types" href="./">
+      Main types
+    </a>
+    
+      
+        
+      
+      
+    
+  </li>
+
+      
+        
+  <li>
+    <a class="" title="Utility functions" href="../utility_functions/">
+      Utility functions
+    </a>
+    
+  </li>
+
+      
+    </ul>
+  </li>
+
+          
+            
+  <li>
+    <span class="section">About</span>
+    <ul>
+      
+        
+  <li>
+    <a class="" title="License" href="../../LICENSE/">
+      License
+    </a>
+    
+  </li>
+
+      
+    </ul>
+  </li>
+
+          
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+      </div>
+      <article class="article">
+        <div class="wrapper">
+          
+          <p><a id='Main-Types-1'></a></p>
+<h1 id="main-types">Main Types</h1>
+<ul>
+<li><a href="./#JuAFEM.AbstractRefShape"><code>JuAFEM.AbstractRefShape</code></a></li>
+<li><a href="./#JuAFEM.Dim"><code>JuAFEM.Dim</code></a></li>
+<li><a href="./#JuAFEM.FEValues"><code>JuAFEM.FEValues</code></a></li>
+<li><a href="./#JuAFEM.FunctionSpace"><code>JuAFEM.FunctionSpace</code></a></li>
+<li><a href="./#JuAFEM.QuadratureRule"><code>JuAFEM.QuadratureRule</code></a></li>
+</ul>
+<p>...</p>
+<p><a id='JuAFEM.Dim' href='#JuAFEM.Dim'>#</a>
+<strong><code>JuAFEM.Dim</code></strong> &mdash; <em>Type</em>.</p>
+<hr />
+<p>Singleton type that is similar to <code>Val</code> in Base but with a more descriptive name. Used to construct some types in a type stable way.</p>
+<p><a id='JuAFEM.AbstractRefShape' href='#JuAFEM.AbstractRefShape'>#</a>
+<strong><code>JuAFEM.AbstractRefShape</code></strong> &mdash; <em>Type</em>.</p>
+<hr />
+<p>Represents a reference shape which quadrature rules and function spaces are defined on. Currently, the only concrete types that subtype this type is <code>RefTetrahedron</code> and <code>RefCube</code>.</p>
+<p><a id='JuAFEM.QuadratureRule' href='#JuAFEM.QuadratureRule'>#</a>
+<strong><code>JuAFEM.QuadratureRule</code></strong> &mdash; <em>Type</em>.</p>
+<hr />
+<p>A <code>QuadratureRule</code> is a way to approximate an integral on a domain by a weighted sum of function values at specific points:</p>
+<p>$\int\limits_\Omega f(\mathbf{x}) d \Omega \approx \sum\limits_{q = 1}^{n_q} f(\mathbf{x}_q) w_q$</p>
+<p>The quadrature rule consists of $n_q$ points in space $\mathbf{x}_q$ with corresponding weights $w_q$.</p>
+<p>In <code>JuaFEM</code>, the <code>QuadratureRule</code> type is mostly used as one of the components to create a <a href="./#JuAFEM.FEValues"><code>FEValues</code></a> object.</p>
+<p><strong>Constructors:</strong></p>
+<div class="codehilite"><pre><span></span>QuadratureRule([quad_rule_type::Symbol], ::Dim{dim}, ref_shape::Shape, order::Int)
+</pre></div>
+
+
+<p><strong>Arguments:</strong></p>
+<ul>
+<li><code>quad_rule_type</code>: The type of the quadrature rule. Currently only <code>:legendre</code> or <code>:lobatto</code> types are supported where <code>:lobatto</code> is only supported for <code>RefCube</code>. If the quadrature rule type is left out, <code>:legendre</code> is used.</li>
+<li><code>::Dim{dim}</code> the dimension of the reference shape</li>
+<li><code>ref_shape</code>: the reference shape</li>
+<li><code>order</code>: the order of the quadrature rule</li>
+</ul>
+<p><strong>Common methods:</strong></p>
+<ul>
+<li><a href="../utility_functions/#JuAFEM.points"><code>points</code></a> : the points of the quadrature rule</li>
+<li><a href="../utility_functions/#JuAFEM.weights"><code>weights</code></a> : the weights of the quadrature rule</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="codehilite"><pre><span></span><span class="n">julia</span><span class="o">&gt;</span> <span class="n">QuadratureRule</span><span class="p">(</span><span class="n">Dim</span><span class="p">{</span><span class="mi">2</span><span class="p">},</span> <span class="n">RefTetrahedron</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">JuAFEM</span><span class="o">.</span><span class="n">QuadratureRule</span><span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="kt">Float64</span><span class="p">}([</span><span class="mf">0.5</span><span class="p">],[[</span><span class="mf">0.33333333333333</span><span class="p">,</span><span class="mf">0.33333333333333</span><span class="p">]])</span>
+
+<span class="n">julia</span><span class="o">&gt;</span> <span class="n">QuadratureRule</span><span class="p">(:</span><span class="n">lobatto</span><span class="p">,</span> <span class="n">Dim</span><span class="p">{</span><span class="mi">1</span><span class="p">},</span> <span class="n">RefCube</span><span class="p">(),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">JuAFEM</span><span class="o">.</span><span class="n">QuadratureRule</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="kt">Float64</span><span class="p">}([</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],[[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],[</span><span class="mf">1.0</span><span class="p">]])</span>
+</pre></div>
+
+
+<p><a id='JuAFEM.FunctionSpace' href='#JuAFEM.FunctionSpace'>#</a>
+<strong><code>JuAFEM.FunctionSpace</code></strong> &mdash; <em>Type</em>.</p>
+<hr />
+<p><strong>Constructor:</strong></p>
+<div class="codehilite"><pre><span></span>FunctionSpace{dim, reference_shape, order}()
+</pre></div>
+
+
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><code>dim</code> The dimension the function space lives in</li>
+<li><code>shape</code> A reference shape, see <a href="./#JuAFEM.AbstractRefShape"><code>AbstractRefShape</code></a></li>
+<li><code>order</code> The highest order term in the polynomial</li>
+</ul>
+<p>The following function spaces are implemented:</p>
+<ul>
+<li><code>Lagrange{1, RefCube, 1}</code></li>
+<li><code>Lagrange{1, RefCube, 2}</code></li>
+<li><code>Lagrange{2, RefCube, 1}</code></li>
+<li><code>Lagrange{2, RefTetrahedron, 1}</code></li>
+<li><code>Lagrange{2, RefTetrahedron, 2}</code></li>
+<li><code>Lagrange{3, RefCube, 1}</code></li>
+<li><code>Serendipity{2, RefCube, 2}</code></li>
+<li><code>Lagrange{3, RefTetrahedron, 1}</code></li>
+</ul>
+<p><a id='JuAFEM.FEValues' href='#JuAFEM.FEValues'>#</a>
+<strong><code>JuAFEM.FEValues</code></strong> &mdash; <em>Type</em>.</p>
+<hr />
+<p>An <code>FEValues</code> object facilitates the process of evaluating values shape functions, gradients of shape functions, values of nodal functions, gradients and divergences of nodal functions etc.</p>
+<p><strong>Constructor</strong></p>
+<div class="codehilite"><pre><span></span>FEValues([::Type{T}], quad_rule::QuadratureRule, function_space::FunctionSpace)
+</pre></div>
+
+
+<p><strong>Arguments</strong></p>
+<ul>
+<li><code>T</code> an optional argument to determine the type the internal data is stored as.</li>
+<li><code>quad_rule</code> an instance of a <a href="./#JuAFEM.QuadratureRule"><code>QuadratureRule</code></a></li>
+<li><code>function_space</code> an instance of a <a href="./#JuAFEM.FunctionSpace"><code>FunctionSpace</code></a></li>
+</ul>
+<p><strong> Common methods</strong></p>
+<ul>
+<li><a href="../utility_functions/#JuAFEM.get_quadrule"><code>get_quadrule</code></a></li>
+<li><a href="../utility_functions/#JuAFEM.get_functionspace"><code>get_functionspace</code></a></li>
+<li>
+<p><a href="../utility_functions/#JuAFEM.detJdV"><code>detJdV</code></a></p>
+</li>
+<li>
+<p><a href="../utility_functions/#JuAFEM.shape_value"><code>shape_value</code></a></p>
+</li>
+<li><a href="../utility_functions/#JuAFEM.shape_gradient"><code>shape_gradient</code></a></li>
+<li><a href="../utility_functions/#JuAFEM.shape_divergence"><code>shape_divergence</code></a></li>
+<li>
+<p><a href="../utility_functions/#JuAFEM.shape_derivative"><code>shape_derivative</code></a></p>
+</li>
+<li>
+<p><a href="../utility_functions/#JuAFEM.function_scalar_value"><code>function_scalar_value</code></a></p>
+</li>
+<li><a href="../utility_functions/#JuAFEM.function_vector_value"><code>function_vector_value</code></a></li>
+<li><a href="../utility_functions/#JuAFEM.function_scalar_gradient"><code>function_scalar_gradient</code></a></li>
+<li><a href="../utility_functions/#JuAFEM.function_vector_divergence"><code>function_vector_divergence</code></a></li>
+<li><a href="../utility_functions/#JuAFEM.function_vector_gradient"><code>function_vector_gradient</code></a></li>
+<li><a href="../utility_functions/#JuAFEM.function_vector_symmetric_gradient"><code>function_vector_symmetric_gradient</code></a></li>
+</ul>
+          <aside class="copyright" role="note">
+            
+            Documentation built with
+            <a href="http://www.mkdocs.org" target="_blank">MkDocs</a>
+            using the
+            <a href="http://squidfunk.github.io/mkdocs-material/" target="_blank">
+              Material
+            </a>
+            theme.
+          </aside>
+          
+            <footer class="footer">
+              
+  <nav class="pagination" aria-label="Footer">
+    <div class="previous">
+      
+        <a href="../../man/basic_usage/" title="Basic usage">
+          <span class="direction">
+            Previous
+          </span>
+          <div class="page">
+            <div class="button button-previous" role="button" aria-label="Previous">
+              <i class="icon icon-back"></i>
+            </div>
+            <div class="stretch">
+              <div class="title">
+                Basic usage
+              </div>
+            </div>
+          </div>
+        </a>
+      
+    </div>
+    <div class="next">
+      
+        <a href="../utility_functions/" title="Utility functions">
+          <span class="direction">
+            Next
+          </span>
+          <div class="page">
+            <div class="stretch">
+              <div class="title">
+                Utility functions
+              </div>
+            </div>
+            <div class="button button-next" role="button" aria-label="Next">
+              <i class="icon icon-forward"></i>
+            </div>
+          </div>
+        </a>
+      
+    </div>
+  </nav>
+
+            </footer>
+          
+        </div>
+      </article>
+      <div class="results" role="status" aria-live="polite">
+        <div class="scrollable">
+          <div class="wrapper">
+            <div class="meta"></div>
+            <div class="list"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+      var base_url = '../..';
+      var repo_id  = 'KristofferC/JuAFEM.jl';
+    </script>
+    <script src="../../assets/javascripts/application-997097ee0c.js"></script>
+    
+      <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+    
+      <script src="../../assets/mathjaxhelper.js"></script>
+    
+    
+  </body>
+</html>
