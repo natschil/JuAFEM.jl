@@ -274,15 +274,14 @@
 <p>...</p>
 <p><a id='JuAFEM.Dim' href='#JuAFEM.Dim'>#</a>
 <strong><code>JuAFEM.Dim</code></strong> &mdash; <em>Type</em>.</p>
-<hr />
 <p>Singleton type that is similar to <code>Val</code> in Base but with a more descriptive name. Used to construct some types in a type stable way.</p>
-<p><a id='JuAFEM.AbstractRefShape' href='#JuAFEM.AbstractRefShape'>#</a>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/051049747ad9da201446870ac972840327ab0101/src/JuAFEM.jl#L36-39' class='documenter-source'>source</a><br>
+<a id='JuAFEM.AbstractRefShape' href='#JuAFEM.AbstractRefShape'>#</a>
 <strong><code>JuAFEM.AbstractRefShape</code></strong> &mdash; <em>Type</em>.</p>
-<hr />
 <p>Represents a reference shape which quadrature rules and function spaces are defined on. Currently, the only concrete types that subtype this type is <code>RefTetrahedron</code> and <code>RefCube</code>.</p>
-<p><a id='JuAFEM.QuadratureRule' href='#JuAFEM.QuadratureRule'>#</a>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/051049747ad9da201446870ac972840327ab0101/src/JuAFEM.jl#L25-28' class='documenter-source'>source</a><br>
+<a id='JuAFEM.QuadratureRule' href='#JuAFEM.QuadratureRule'>#</a>
 <strong><code>JuAFEM.QuadratureRule</code></strong> &mdash; <em>Type</em>.</p>
-<hr />
 <p>A <code>QuadratureRule</code> is a way to approximate an integral on a domain by a weighted sum of function values at specific points:</p>
 <p>$\int\limits_\Omega f(\mathbf{x}) d \Omega \approx \sum\limits_{q = 1}^{n_q} f(\mathbf{x}_q) w_q$</p>
 <p>The quadrature rule consists of $n_q$ points in space $\mathbf{x}_q$ with corresponding weights $w_q$.</p>
@@ -313,9 +312,9 @@
 </pre></div>
 
 
-<p><a id='JuAFEM.FunctionSpace' href='#JuAFEM.FunctionSpace'>#</a>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/051049747ad9da201446870ac972840327ab0101/src/quadrature.jl#L6-42' class='documenter-source'>source</a><br>
+<a id='JuAFEM.FunctionSpace' href='#JuAFEM.FunctionSpace'>#</a>
 <strong><code>JuAFEM.FunctionSpace</code></strong> &mdash; <em>Type</em>.</p>
-<hr />
 <p><strong>Constructor:</strong></p>
 <div class="codehilite"><pre><span></span>FunctionSpace{dim, reference_shape, order}()
 </pre></div>
@@ -338,9 +337,9 @@
 <li><code>Serendipity{2, RefCube, 2}</code></li>
 <li><code>Lagrange{3, RefTetrahedron, 1}</code></li>
 </ul>
-<p><a id='JuAFEM.FEValues' href='#JuAFEM.FEValues'>#</a>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/051049747ad9da201446870ac972840327ab0101/src/function_spaces.jl#L1-23' class='documenter-source'>source</a><br>
+<a id='JuAFEM.FEValues' href='#JuAFEM.FEValues'>#</a>
 <strong><code>JuAFEM.FEValues</code></strong> &mdash; <em>Type</em>.</p>
-<hr />
 <p>An <code>FEValues</code> object facilitates the process of evaluating values shape functions, gradients of shape functions, values of nodal functions, gradients and divergences of nodal functions etc.</p>
 <p><strong>Constructor</strong></p>
 <div class="codehilite"><pre><span></span>FEValues([::Type{T}], quad_rule::QuadratureRule, function_space::FunctionSpace)
@@ -377,6 +376,7 @@
 <li><a href="../utility_functions/#JuAFEM.function_vector_gradient"><code>function_vector_gradient</code></a></li>
 <li><a href="../utility_functions/#JuAFEM.function_vector_symmetric_gradient"><code>function_vector_symmetric_gradient</code></a></li>
 </ul>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/051049747ad9da201446870ac972840327ab0101/src/fe_values.jl#L1-33' class='documenter-source'>source</a><br></p>
           <aside class="copyright" role="note">
             
             Documentation built with
