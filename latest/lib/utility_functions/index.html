@@ -326,7 +326,7 @@
 </pre></div>
 
 
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/quadrature.jl#L72-L90' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/quadrature.jl#L72-L90' class='documenter-source'>source</a><br></p>
 <p><a id='JuAFEM.weights' href='#JuAFEM.weights'>#</a>
 <strong><code>JuAFEM.weights</code></strong> &mdash; <em>Function</em>.</p>
 <p>The weights of the quadrature rule.</p>
@@ -347,47 +347,51 @@
 </pre></div>
 
 
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/quadrature.jl#L48-L68' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/quadrature.jl#L48-L68' class='documenter-source'>source</a><br></p>
 <p><a id='FEValues-1'></a></p>
 <h2 id="fevalues">FEValues</h2>
 <p><a id='JuAFEM.get_quadrule' href='#JuAFEM.get_quadrule'>#</a>
 <strong><code>JuAFEM.get_quadrule</code></strong> &mdash; <em>Function</em>.</p>
-<p>The quadrature rule for the <code>FEValues</code> type.</p>
-<div class="codehilite"><pre><span></span>get_quadrule(fe_v::FEValues)
+<p>The quadrature rule for the <code>AbstractFEValues</code> type.</p>
+<div class="codehilite"><pre><span></span>get_quadrule(fe_v::AbstractFEValues)
 </pre></div>
 
 
 <p><strong> Arguments </strong></p>
 <ul>
-<li><code>fe_values</code>: the <code>FEValues</code> object</li>
+<li><code>fe_v</code>: the <code>AbstractFEValues</code> object</li>
 </ul>
 <p><strong> Results </strong></p>
 <ul>
 <li><code>::QuadratureRule</code>: the quadrature rule.</li>
 </ul>
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/fe_values.jl#L114-L127' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/commons_abstract_fevalues.jl#L3-L16' class='documenter-source'>source</a><br></p>
 <p><a id='JuAFEM.get_functionspace' href='#JuAFEM.get_functionspace'>#</a>
 <strong><code>JuAFEM.get_functionspace</code></strong> &mdash; <em>Function</em>.</p>
-<p>The function space for the <code>FEValues</code> type.</p>
+<p>The function space for the <code>AbstractFEValues</code> type.</p>
+<div class="codehilite"><pre><span></span>get_functionspace(fe_v::AbstractFEValues)
+</pre></div>
+
+
 <p><strong>Arguments</strong></p>
 <ul>
-<li><code>fe_values</code>: the <code>FEValues</code> object</li>
+<li><code>fe_v</code>: the <code>AbstractFEValues</code> object</li>
 </ul>
 <p><strong>Results</strong></p>
 <ul>
 <li><code>::FunctionSpace</code>: the function space</li>
 </ul>
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/fe_values.jl#L130-L141' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/commons_abstract_fevalues.jl#L20-L33' class='documenter-source'>source</a><br></p>
 <p><a id='JuAFEM.detJdV' href='#JuAFEM.detJdV'>#</a>
 <strong><code>JuAFEM.detJdV</code></strong> &mdash; <em>Function</em>.</p>
 <p>The product between the determinant of the Jacobian and the quadrature point weight for a given quadrature point: $\det(J(\mathbf{x})) w_q$</p>
-<div class="codehilite"><pre><span></span>detJdV(fe_v::FEValues, quadrature_point::Int)
+<div class="codehilite"><pre><span></span>detJdV(fe_v::AbstractFEValues, quadrature_point::Int)
 </pre></div>
 
 
 <p><strong> Arguments:</strong></p>
 <ul>
-<li><code>fe_values</code>: the <code>FEValues</code> object</li>
+<li><code>fe_v</code>: the <code>AbstractFEValues</code> object</li>
 <li><code>quadrature_point</code> The quadrature point number</li>
 </ul>
 <p><strong>Results:</strong></p>
@@ -395,40 +399,44 @@
 <li><code>::Number</code></li>
 </ul>
 <p><strong>Details:</strong></p>
-<p>This value is typically used when one integrates a function on a finite element as</p>
-<p>$\int\limits_\Omega f(\mathbf{x}) d \Omega \approx \sum\limits_{q = 1}^{n_q} f(\mathbf{x}_q) \det(J(\mathbf{x})) w_q$</p>
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/fe_values.jl#L159-L179' class='documenter-source'>source</a><br></p>
+<p>This value is typically used when one integrates a function on a finite element cell or boundary as</p>
+<p>$\int\limits_\Omega f(\mathbf{x}) d \Omega \approx \sum\limits_{q = 1}^{n_q} f(\mathbf{x}<em>q) \det(J(\mathbf{x})) w_q$ $\int\limits</em>\Gamma f(\mathbf{x}) d \Gamma \approx \sum\limits_{q = 1}^{n_q} f(\mathbf{x}_q) \det(J(\mathbf{x})) w_q$</p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/commons_abstract_fevalues.jl#L52-L73' class='documenter-source'>source</a><br></p>
 <p><a id='JuAFEM.shape_value' href='#JuAFEM.shape_value'>#</a>
 <strong><code>JuAFEM.shape_value</code></strong> &mdash; <em>Function</em>.</p>
-<p>Computes the value of the shape function     shape_value(fe_v::FEValues, quadrature_point::Int, [base_function::Int])</p>
+<p>Computes the value of the shape function</p>
+<div class="codehilite"><pre><span></span>shape_value(fe_v::AbstractFEValues, quadrature_point::Int, [base_function::Int])
+</pre></div>
+
+
 <p>Gets the values of the shape function for a given quadrature point and base_func</p>
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/fe_values.jl#L184-L190' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/commons_abstract_fevalues.jl#L77-L84' class='documenter-source'>source</a><br></p>
 <p><a id='JuAFEM.shape_gradient' href='#JuAFEM.shape_gradient'>#</a>
 <strong><code>JuAFEM.shape_gradient</code></strong> &mdash; <em>Function</em>.</p>
 <p>Get the gradients of the shape functions for a given quadrature point</p>
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/fe_values.jl#L194-L196' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/commons_abstract_fevalues.jl#L90-L92' class='documenter-source'>source</a><br></p>
 <p>Get the gradient of the shape functions for a given quadrature point and base function</p>
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/fe_values.jl#L199-L201' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/commons_abstract_fevalues.jl#L96-L98' class='documenter-source'>source</a><br></p>
 <p><a id='JuAFEM.shape_divergence' href='#JuAFEM.shape_divergence'>#</a>
 <strong><code>JuAFEM.shape_divergence</code></strong> &mdash; <em>Function</em>.</p>
 <p>Get the divergence of the shape functions for a given quadrature point and base function</p>
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/fe_values.jl#L204-L206' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/commons_abstract_fevalues.jl#L102-L104' class='documenter-source'>source</a><br></p>
 <p><a id='JuAFEM.shape_derivative' href='#JuAFEM.shape_derivative'>#</a>
 <strong><code>JuAFEM.shape_derivative</code></strong> &mdash; <em>Function</em>.</p>
 <p>Get the gradients of the shape functions for a given quadrature point</p>
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/fe_values.jl#L194-L196' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/commons_abstract_fevalues.jl#L90-L92' class='documenter-source'>source</a><br></p>
 <p>Get the gradient of the shape functions for a given quadrature point and base function</p>
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/fe_values.jl#L199-L201' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/commons_abstract_fevalues.jl#L96-L98' class='documenter-source'>source</a><br></p>
 <p><a id='JuAFEM.function_scalar_value' href='#JuAFEM.function_scalar_value'>#</a>
 <strong><code>JuAFEM.function_scalar_value</code></strong> &mdash; <em>Function</em>.</p>
 <p>Computes the value in a quadrature point for a scalar valued function</p>
-<div class="codehilite"><pre><span></span>function_scalar_value{dim, T}(fe_v::FEValues{dim}, q_point::Int, u::Vector{T})
+<div class="codehilite"><pre><span></span>function_scalar_value{dim, T}(fe_v::AbstractFEValues{dim}, q_point::Int, u::Vector{T})
 </pre></div>
 
 
 <p><strong>Arguments:</strong></p>
 <ul>
-<li><code>fe_v</code>: the <code>FEValues</code> object</li>
+<li><code>fe_v</code>: the <code>AbstractFEValues</code> object</li>
 <li><code>q_point</code>: the quadrature point number</li>
 <li><code>u</code>: the value of the function in the nodes</li>
 </ul>
@@ -438,17 +446,17 @@
 </ul>
 <p><strong>Details:</strong></p>
 <p>The value of a scalar valued function is computed as $T(\mathbf{x}) = \sum\limits_{i = 1}^n N_i (\mathbf{x}) T_i$</p>
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/fe_values.jl#L212-L230' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/commons_abstract_fevalues.jl#L111-L129' class='documenter-source'>source</a><br></p>
 <p><a id='JuAFEM.function_vector_value' href='#JuAFEM.function_vector_value'>#</a>
 <strong><code>JuAFEM.function_vector_value</code></strong> &mdash; <em>Function</em>.</p>
-<div class="codehilite"><pre><span></span>function_vector_value{dim, T}(fe_v::FEValues{dim}, q_point::Int, u::Vector{Vec{dim, T}})
+<div class="codehilite"><pre><span></span>function_vector_value{dim, T}(fe_v::AbstractFEValues{dim}, q_point::Int, u::Vector{Vec{dim, T}})
 </pre></div>
 
 
 <p>Computes the value in a quadrature point for a vector valued function.</p>
 <p><strong>Arguments:</strong></p>
 <ul>
-<li><code>fe_v</code>: the <code>FEValues</code> object</li>
+<li><code>fe_v</code>: the <code>AbstractFEValues</code> object</li>
 <li><code>q_point</code>: the quadrature point number</li>
 <li><code>u</code>: the value of the function in the nodes</li>
 </ul>
@@ -458,17 +466,17 @@
 </ul>
 <p><strong>Details:</strong></p>
 <p>The value of a vector valued function is computed as $\mathbf{u}(\mathbf{x}) = \sum\limits_{i = 1}^n N_i (\mathbf{x}) \mathbf{u}_i$</p>
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/fe_values.jl#L242-L260' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/commons_abstract_fevalues.jl#L141-L159' class='documenter-source'>source</a><br></p>
 <p><a id='JuAFEM.function_scalar_gradient' href='#JuAFEM.function_scalar_gradient'>#</a>
 <strong><code>JuAFEM.function_scalar_gradient</code></strong> &mdash; <em>Function</em>.</p>
-<div class="codehilite"><pre><span></span>function_scalar_gradien{dim, T}t(fe_v::FEValues{dim}, q_point::Int, u::Vector{T}) -&gt; grad::Tensor{1}
+<div class="codehilite"><pre><span></span>function_scalar_gradient{dim, T}(fe_v::AbstractFEValues{dim}, q_point::Int, u::Vector{T}) -&gt; grad::Tensor{1}
 </pre></div>
 
 
-<p>Computes the gradient for a scalar valued function in a quadrature point .</p>
+<p>Computes the gradient for a scalar valued function in a quadrature point.</p>
 <p><strong>Arguments:</strong></p>
 <ul>
-<li><code>fe_v</code>: the <code>FEValues</code> object</li>
+<li><code>fe_v</code>: the <code>AbstractFEValues</code> object</li>
 <li><code>q_point</code>: the quadrature point number</li>
 <li><code>u</code>: the value of the function in the nodes</li>
 </ul>
@@ -478,17 +486,17 @@
 </ul>
 <p><strong>Details:</strong></p>
 <p>The gradient of a scalar function is computed as $\mathbf{\nabla} T(\mathbf{x}) = \sum\limits_{i = 1}^n \mathbf{\nabla} N_i (\mathbf{x}) T_i$ where $T_i$ are the nodal values of the function.</p>
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/fe_values.jl#L272-L291' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/commons_abstract_fevalues.jl#L171-L190' class='documenter-source'>source</a><br></p>
 <p><a id='JuAFEM.function_vector_divergence' href='#JuAFEM.function_vector_divergence'>#</a>
 <strong><code>JuAFEM.function_vector_divergence</code></strong> &mdash; <em>Function</em>.</p>
 <p>Computes the divergence in a quadrature point for a vector valued function.</p>
-<div class="codehilite"><pre><span></span>function_vector_divergence{dim, T}(fe_v::FEValues{dim}, q_point::Int, u::Vector{Vec{dim, T}})
+<div class="codehilite"><pre><span></span>function_vector_divergence{dim, T}(fe_v::AbstractFEValues{dim}, q_point::Int, u::Vector{Vec{dim, T}})
 </pre></div>
 
 
 <p><strong>Arguments:</strong></p>
 <ul>
-<li><code>fe_v</code>: the <code>FEValues</code> object</li>
+<li><code>fe_v</code>: the <code>AbstractFEValues</code> object</li>
 <li><code>q_point</code>: the quadrature point number</li>
 <li><code>u</code>: the value of the function in the nodes</li>
 </ul>
@@ -500,17 +508,17 @@
 <p>The divergence of a vector valued functions in the quadrature point $\mathbf{x}_q)$ is computed as</p>
 <p>$\mathbf{\nabla} \cdot \mathbf{u}(\mathbf{x_q}) = \sum\limits_{i = 1}^n \mathbf{\nabla} N_i (\mathbf{x_q}) \cdot \mathbf{u}_i$</p>
 <p>where $\mathbf{u}_i$ are the nodal values of the function.</p>
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/fe_values.jl#L363-L387' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/commons_abstract_fevalues.jl#L261-L285' class='documenter-source'>source</a><br></p>
 <p><a id='JuAFEM.function_vector_gradient' href='#JuAFEM.function_vector_gradient'>#</a>
 <strong><code>JuAFEM.function_vector_gradient</code></strong> &mdash; <em>Function</em>.</p>
 <p>Computes the gradient for a vector valued function in a quadrature point.</p>
-<div class="codehilite"><pre><span></span>function_vector_gradient{dim, T}(fe_v::FEValues{dim}, q_point::Int, u::Vector{Vec{dim, T}})
+<div class="codehilite"><pre><span></span>function_vector_gradient{dim, T}(fe_v::AbstractFEValues{dim}, q_point::Int, u::Vector{Vec{dim, T}})
 </pre></div>
 
 
 <p><strong>Arguments:</strong></p>
 <ul>
-<li><code>fe_v</code>: the <code>FEValues</code> object</li>
+<li><code>fe_v</code>: the <code>AbstractFEValues</code> object</li>
 <li><code>q_point</code>: the quadrature point number</li>
 <li><code>u</code>: the value of the function in the nodes</li>
 </ul>
@@ -520,17 +528,17 @@
 </ul>
 <p><strong>Details:</strong></p>
 <p>The gradient of a scalar function is computed as $\mathbf{\nabla} \mathbf{u}(\mathbf{x}) = \sum\limits_{i = 1}^n \mathbf{\nabla} N_i (\mathbf{x}) \otimes \mathbf{u}_i$ where $\mathbf{u}_i$ are the nodal values of the function.</p>
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/fe_values.jl#L304-L323' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/commons_abstract_fevalues.jl#L202-L221' class='documenter-source'>source</a><br></p>
 <p><a id='JuAFEM.function_vector_symmetric_gradient' href='#JuAFEM.function_vector_symmetric_gradient'>#</a>
 <strong><code>JuAFEM.function_vector_symmetric_gradient</code></strong> &mdash; <em>Function</em>.</p>
 <p>Computes the gradient for a vector valued function in a quadrature point.</p>
-<div class="codehilite"><pre><span></span>function_vector_symmetric_gradient{dim, T}(fe_v::FEValues{dim}, q_point::Int, u::Vector{Vec{dim, T}})
+<div class="codehilite"><pre><span></span>function_vector_symmetric_gradient{dim, T}(fe_v::AbstractFEValues{dim}, q_point::Int, u::Vector{Vec{dim, T}})
 </pre></div>
 
 
 <p><strong>Arguments:</strong></p>
 <ul>
-<li><code>fe_v</code>: the <code>FEValues</code> object</li>
+<li><code>fe_v</code>: the <code>AbstractFEValues</code> object</li>
 <li><code>q_point</code>: the quadrature point number</li>
 <li><code>u</code>: the value of the function in the nodes</li>
 </ul>
@@ -542,7 +550,7 @@
 <p>The symmetric gradient of a scalar function is computed as</p>
 <p>$\left[ \mathbf{\nabla}  \mathbf{u}(\mathbf{x_q}) \right]^\text{sym} =  \sum\limits_{i = 1}^n  \frac{1}{2} \left[ \mathbf{\nabla} N_i (\mathbf{x}_q) \otimes \mathbf{u}_i + \mathbf{u}_i  \otimes  \mathbf{\nabla} N_i (\mathbf{x}_q) \right]$</p>
 <p>where $\mathbf{u}_i$ are the nodal values of the function.</p>
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/fe_values.jl#L335-L357' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/commons_abstract_fevalues.jl#L233-L255' class='documenter-source'>source</a><br></p>
 <p><a id='VTK-1'></a></p>
 <h2 id="vtk">VTK</h2>
 <p><a id='WriteVTK.vtk_grid' href='#WriteVTK.vtk_grid'>#</a>
@@ -590,7 +598,7 @@
 <p><strong>Details</strong></p>
 <p>This is a thin wrapper around the <code>vtk_grid</code> function from the <a href="https://github.com/jipolanco/WriteVTK.jl"><code>WriteVTK</code></a> package.</p>
 <p>For information how to add cell data and point data to the resulting VTK object as well as how to write it to a file see <a href="https://github.com/jipolanco/WriteVTK.jl#generating-an-unstructured-vtk-file">https://github.com/jipolanco/WriteVTK.jl#generating-an-unstructured-vtk-file</a></p>
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/a18626b84d056fa9a43e4c7d2d20322c3bc1cd9c/src/VTK.jl#L24-L73' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/967634c49aa100ced1ab8992baf50d503572724b/src/VTK.jl#L24-L73' class='documenter-source'>source</a><br></p>
           <aside class="copyright" role="note">
             
             Documentation built with
