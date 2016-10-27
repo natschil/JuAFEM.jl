@@ -287,65 +287,19 @@
           <p><a id='Utilities-1'></a></p>
 <h1 id="utilities">Utilities</h1>
 <ul>
-<li><a href="./#JuAFEM.detJdV"><code>JuAFEM.detJdV</code></a></li>
-<li><a href="./#JuAFEM.get_functionspace"><code>JuAFEM.get_functionspace</code></a></li>
-<li><a href="./#JuAFEM.get_quadrule"><code>JuAFEM.get_quadrule</code></a></li>
-<li><a href="./#JuAFEM.points"><code>JuAFEM.points</code></a></li>
 <li><a href="./#JuAFEM.shape_derivative"><code>JuAFEM.shape_derivative</code></a></li>
 <li><a href="./#JuAFEM.shape_divergence"><code>JuAFEM.shape_divergence</code></a></li>
 <li><a href="./#JuAFEM.shape_gradient"><code>JuAFEM.shape_gradient</code></a></li>
 <li><a href="./#JuAFEM.shape_value"><code>JuAFEM.shape_value</code></a></li>
-<li><a href="./#JuAFEM.weights"><code>JuAFEM.weights</code></a></li>
 <li><a href="./#WriteVTK.vtk_grid"><code>WriteVTK.vtk_grid</code></a></li>
 </ul>
 <p><a id='QuadratureRule-1'></a></p>
 <h2 id="quadraturerule">QuadratureRule</h2>
-<p><a id='JuAFEM.points' href='#JuAFEM.points'>#</a>
-<strong><code>JuAFEM.points</code></strong> &mdash; <em>Function</em>.</p>
-<p>The points of the quadrature rule.</p>
-<div class="codehilite"><pre><span></span>points(qr::QuadratureRule)
+<div class="codehilite"><pre><span></span>points
+weights
 </pre></div>
 
 
-<p><strong>Arguments:</strong></p>
-<ul>
-<li><code>qr</code>: the quadrature rule</li>
-</ul>
-<p><strong>Example:</strong></p>
-<div class="codehilite"><pre><span></span><span class="n">julia</span><span class="o">&gt;</span> <span class="n">qr</span> <span class="o">=</span> <span class="n">QuadratureRule</span><span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="n">RefTetrahedron</span><span class="p">}(:</span><span class="n">legendre</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
-
-<span class="n">julia</span><span class="o">&gt;</span> <span class="n">points</span><span class="p">(</span><span class="n">qr</span><span class="p">)</span>
-<span class="mi">3</span><span class="o">-</span><span class="n">element</span> <span class="n">Array</span><span class="p">{</span><span class="n">ContMechTensors</span><span class="o">.</span><span class="n">Tensor</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="kt">Float64</span><span class="p">,</span><span class="mi">2</span><span class="p">},</span><span class="mi">1</span><span class="p">}:</span>
- <span class="p">[</span><span class="mf">0.166667</span><span class="p">,</span><span class="mf">0.166667</span><span class="p">]</span>
- <span class="p">[</span><span class="mf">0.166667</span><span class="p">,</span><span class="mf">0.666667</span><span class="p">]</span>
- <span class="p">[</span><span class="mf">0.666667</span><span class="p">,</span><span class="mf">0.166667</span><span class="p">]</span>
-</pre></div>
-
-
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/eeed03e7f1272c04339182c344136a8e85983394/src/quadrature.jl#L74-L94' class='documenter-source'>source</a><br></p>
-<p><a id='JuAFEM.weights' href='#JuAFEM.weights'>#</a>
-<strong><code>JuAFEM.weights</code></strong> &mdash; <em>Function</em>.</p>
-<p>The weights of the quadrature rule.</p>
-<div class="codehilite"><pre><span></span>weights(qr::QuadratureRule) = qr.weights
-</pre></div>
-
-
-<p><strong>Arguments:</strong></p>
-<ul>
-<li><code>qr</code>: the quadrature rule</li>
-</ul>
-<p><strong>Example:</strong></p>
-<div class="codehilite"><pre><span></span><span class="n">julia</span><span class="o">&gt;</span> <span class="n">qr</span> <span class="o">=</span> <span class="n">QuadratureRule</span><span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="n">RefTetrahedron</span><span class="p">}(:</span><span class="n">legendre</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
-
-<span class="n">julia</span><span class="o">&gt;</span> <span class="n">weights</span><span class="p">(</span><span class="n">qr</span><span class="p">)</span>
-<span class="mi">3</span><span class="o">-</span><span class="n">element</span> <span class="n">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">,</span><span class="mi">1</span><span class="p">}:</span>
- <span class="mf">0.166667</span>
- <span class="mf">0.166667</span>
- <span class="mf">0.166667</span>
-</pre></div>
-
-
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/eeed03e7f1272c04339182c344136a8e85983394/src/quadrature.jl#L48-L70' class='documenter-source'>source</a><br></p>
 <p><a id='FEValues-1'></a></p>
 <h2 id="fevalues">FEValues</h2>
 <div class="codehilite"><pre><span></span>get_quadrule
@@ -413,7 +367,7 @@ function_vector_symmetric_gradient
 <p><strong>Details</strong></p>
 <p>This is a thin wrapper around the <code>vtk_grid</code> function from the <a href="https://github.com/jipolanco/WriteVTK.jl"><code>WriteVTK</code></a> package.</p>
 <p>For information how to add cell data and point data to the resulting VTK object as well as how to write it to a file see <a href="https://github.com/jipolanco/WriteVTK.jl#generating-an-unstructured-vtk-file">https://github.com/jipolanco/WriteVTK.jl#generating-an-unstructured-vtk-file</a></p>
-<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/eeed03e7f1272c04339182c344136a8e85983394/src/VTK.jl#L1-L50' class='documenter-source'>source</a><br></p>
+<p><a target='_blank' href='https://github.com/KristofferC/JuAFEM.jl/tree/b2dbae48660c13159d2ba4dffa3639335460f169/src/VTK.jl#L1-L50' class='documenter-source'>source</a><br></p>
           <aside class="copyright" role="note">
             
             Documentation built with
