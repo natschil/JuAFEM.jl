@@ -21,7 +21,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "Introduction",
     "category": "section",
-    "text": "JuAFEM is a finite element toolbox that provides functionalities to implement finite element analysis in Julia. The aim is to be general and to keep mathematical abstractions. The main functionalities of the package include:Facilitate integration using different quadrature rules.\nDefine different finite element spaces.\nEvaluate shape functions, derivatives of shape functions etc. for the different finite element spaces and quadrature rules.\nEvaluate functions and derivatives in the finite element space.\nGenerate simple grids.\nExport grids and solutions to VTK.The types and functionalities of JuAFEM is described in more detail in the manual, see below."
+    "text": "JuAFEM is a finite element toolbox that provides functionalities to implement finite element analysis in Julia. The aim is to be general and to keep mathematical abstractions. The main functionalities of the package include:Facilitate integration using different quadrature rules.\nDefine different finite element interpolations.\nEvaluate shape functions, derivatives of shape functions etc. for the different interpolations and quadrature rules.\nEvaluate functions and derivatives in the finite element space.\nGenerate simple grids.\nExport grids and solutions to VTK.The types and functionalities of JuAFEM is described in more detail in the manual, see below."
 },
 
 {
@@ -101,7 +101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Getting started",
     "title": "Getting started",
     "category": "page",
-    "text": "DocTestSetup = quote\n    using JuAFEM\n    quad_rule = QuadratureRule{2, RefCube}(2)\n    func_space = Lagrange{2, RefCube, 1}()\n    cell_values = CellScalarValues(quad_rule, func_space)\n    x = Vec{2, Float64}[Vec{2}((0.0, 0.0)),\n                           Vec{2}((1.5, 0.0)),\n                           Vec{2}((2.0, 2.0)),\n                           Vec{2}((0.0, 1.0))]\n    reinit!(cell_values, x)\nend"
+    "text": "DocTestSetup = quote\n    using JuAFEM\n    quad_rule = QuadratureRule{2, RefCube}(2)\n    interpolation = Lagrange{2, RefCube, 1}()\n    cell_values = CellScalarValues(quad_rule, interpolation)\n    x = Vec{2, Float64}[Vec{2}((0.0, 0.0)),\n                           Vec{2}((1.5, 0.0)),\n                           Vec{2}((2.0, 2.0)),\n                           Vec{2}((0.0, 1.0))]\n    reinit!(cell_values, x)\nend"
 },
 
 {
@@ -109,7 +109,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Getting started",
     "title": "Getting started",
     "category": "section",
-    "text": "tip: Tip\nCheckout some examples of usage of JuAFEM in the examples/ directory.For the impatient: Here is a quick overview on how the some of the packages functionalities can be used. This quickly describes CellScalarValues which a lot of the package is built upon.First, create a quadrature rule, for integration in 2D, on a reference cube:julia> quad_rule = QuadratureRule{2, RefCube}(2);Next, create a function spacejulia> func_space = Lagrange{2, RefCube, 1}();Use these to create a CellScalarValues object.julia> cell_values = CellScalarValues(quad_rule, func_space);Presume one cell in the grid has the following vertices:julia> x = Vec{2, Float64}[Vec{2}((0.0, 0.0)),\n                           Vec{2}((1.5, 0.0)),\n                           Vec{2}((2.0, 2.0)),\n                           Vec{2}((0.0, 1.0))];To update cell_values for the given cell, use reinit!:julia> reinit!(cell_values, x)We can now query the CellScalarValues object for shape function information:Value of shape function 1 in quadrature point 3julia> shape_value(cell_values, 3, 1)\n0.16666666666666663Derivative of the same shape function, in the same quadrature pointjulia> shape_gradient(cell_values, 3, 1)\n2-element ContMechTensors.Tensor{1,2,Float64,2}:\n  0.165523\n -0.665523We can also evaluate values and gradients of functions on the finite element basis.julia> T = [0.0, 1.0, 2.0, 1.5]; # nodal values\n\njulia> function_value(cell_values, 3, T) # value of T in 3rd quad point\n1.311004233964073\n\njulia> function_gradient(cell_values, 1, T)  # value of grad(T) in 1st quad point\n2-element ContMechTensors.Tensor{1,2,Float64,2}:\n 0.410202\n 1.1153The same can also be done for a vector valued function:julia> u = Vec{2, Float64}[Vec{2}((0.0, 0.0)),\n                           Vec{2}((3.5, 2.0)),\n                           Vec{2}((2.0, 2.0)),\n                           Vec{2}((2.0, 1.0))]; # nodal vectors\n\njulia> function_value(cell_values, 2, u) # value of u in 2nd quad point\n2-element ContMechTensors.Tensor{1,2,Float64,2}:\n 2.59968\n 1.62201\n\njulia> function_symmetric_gradient(cell_values, 3, u) # sym(grad(u)) in 3rd quad point\n2×2 ContMechTensors.SymmetricTensor{2,2,Float64,3}:\n -0.0443518  0.713306\n  0.713306   0.617741For more functions see the documentation for CellValues"
+    "text": "tip: Tip\nCheckout some examples of usage of JuAFEM in the examples/ directory.For the impatient: Here is a quick overview on how the some of the packages functionalities can be used. This quickly describes CellScalarValues which a lot of the package is built upon.First, create a quadrature rule, for integration in 2D, on a reference cube:julia> quad_rule = QuadratureRule{2, RefCube}(2);Next, create an interpolationjulia> interpolation = Lagrange{2, RefCube, 1}();Use these to create a CellScalarValues object.julia> cell_values = CellScalarValues(quad_rule, interpolation);Presume one cell in the grid has the following vertices:julia> x = Vec{2, Float64}[Vec{2}((0.0, 0.0)),\n                           Vec{2}((1.5, 0.0)),\n                           Vec{2}((2.0, 2.0)),\n                           Vec{2}((0.0, 1.0))];To update cell_values for the given cell, use reinit!:julia> reinit!(cell_values, x)We can now query the CellScalarValues object for shape function information:Value of shape function 1 in quadrature point 3julia> shape_value(cell_values, 3, 1)\n0.16666666666666663Derivative of the same shape function, in the same quadrature pointjulia> shape_gradient(cell_values, 3, 1)\n2-element ContMechTensors.Tensor{1,2,Float64,2}:\n  0.165523\n -0.665523We can also evaluate values and gradients of functions on the finite element basis.julia> T = [0.0, 1.0, 2.0, 1.5]; # nodal values\n\njulia> function_value(cell_values, 3, T) # value of T in 3rd quad point\n1.311004233964073\n\njulia> function_gradient(cell_values, 1, T)  # value of grad(T) in 1st quad point\n2-element ContMechTensors.Tensor{1,2,Float64,2}:\n 0.410202\n 1.1153The same can also be done for a vector valued function:julia> u = Vec{2, Float64}[Vec{2}((0.0, 0.0)),\n                           Vec{2}((3.5, 2.0)),\n                           Vec{2}((2.0, 2.0)),\n                           Vec{2}((2.0, 1.0))]; # nodal vectors\n\njulia> function_value(cell_values, 2, u) # value of u in 2nd quad point\n2-element ContMechTensors.Tensor{1,2,Float64,2}:\n 2.59968\n 1.62201\n\njulia> function_symmetric_gradient(cell_values, 3, u) # sym(grad(u)) in 3rd quad point\n2×2 ContMechTensors.SymmetricTensor{2,2,Float64,3}:\n -0.0443518  0.713306\n  0.713306   0.617741For more functions see the documentation for CellValues"
 },
 
 {
@@ -125,7 +125,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Main Types",
     "title": "JuAFEM.AbstractRefShape",
     "category": "Type",
-    "text": "Represents a reference shape which quadrature rules and function spaces are defined on. Currently, the only concrete types that subtype this type are RefCube in 1,2 and 3 dimensions, and RefTetrahedron in 2 and 3 dimensions.\n\n\n\n"
+    "text": "Represents a reference shape which quadrature rules and interpolations are defined on. Currently, the only concrete types that subtype this type are RefCube in 1,2 and 3 dimensions, and RefTetrahedron in 2 and 3 dimensions.\n\n\n\n"
 },
 
 {
@@ -137,11 +137,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/maintypes.html#JuAFEM.FunctionSpace",
+    "location": "lib/maintypes.html#JuAFEM.Interpolation",
     "page": "Main Types",
-    "title": "JuAFEM.FunctionSpace",
+    "title": "JuAFEM.Interpolation",
     "category": "Type",
-    "text": "A FunctionSpace is used to define shape functions.\n\nConstructor:\n\nFunctionSpace{dim, reference_shape, order}()\n\nArguments:\n\ndim: the dimension the function space lives in\nshape: a reference shape, see AbstractRefShape\norder: the highest order term in the polynomial\n\nThe following function spaces are implemented:\n\nLagrange{1, RefCube, 1}\nLagrange{1, RefCube, 2}\nLagrange{2, RefCube, 1}\nLagrange{2, RefCube, 2}\nLagrange{2, RefTetrahedron, 1}\nLagrange{2, RefTetrahedron, 2}\nLagrange{3, RefCube, 1}\nSerendipity{2, RefCube, 2}\nLagrange{3, RefTetrahedron, 1}\n\nCommon methods:\n\ngetnbasefunctions\ngetdim\ngetrefshape\ngetorder\n\nExample:\n\njulia> fs = Lagrange{2, RefTetrahedron, 2}()\nJuAFEM.Lagrange{2,JuAFEM.RefTetrahedron,2}()\n\njulia> getnbasefunctions(fs)\n6\n\n\n\n"
+    "text": "An Interpolation is used to define shape functions to interpolate a function between nodes.\n\nConstructor:\n\nInterpolation{dim, reference_shape, order}()\n\nArguments:\n\ndim: the dimension the interpolation lives in\nshape: a reference shape, see AbstractRefShape\norder: the highest order term in the polynomial\n\nThe following interpolations are implemented:\n\nLagrange{1, RefCube, 1}\nLagrange{1, RefCube, 2}\nLagrange{2, RefCube, 1}\nLagrange{2, RefCube, 2}\nLagrange{2, RefTetrahedron, 1}\nLagrange{2, RefTetrahedron, 2}\nLagrange{3, RefCube, 1}\nSerendipity{2, RefCube, 2}\nLagrange{3, RefTetrahedron, 1}\n\nCommon methods:\n\ngetnbasefunctions\ngetdim\ngetrefshape\ngetorder\n\nExample:\n\njulia> ip = Lagrange{2, RefTetrahedron, 2}()\nJuAFEM.Lagrange{2,JuAFEM.RefTetrahedron,2}()\n\njulia> getnbasefunctions(ip)\n6\n\n\n\n"
 },
 
 {
@@ -149,7 +149,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Main Types",
     "title": "JuAFEM.CellValues",
     "category": "Type",
-    "text": "A CellValues object facilitates the process of evaluating values shape functions, gradients of shape functions, values of nodal functions, gradients and divergences of nodal functions etc. in the finite element cell. There are two different types of CellValues: CellScalarValues and CellVectorValues. As the names suggest, CellScalarValues utilizes scalar shape functions and CellVectorValues utilizes vectorial shape functions. For a scalar field, the CellScalarValues type should be used. For vector field, both subtypes can be used.\n\nConstructors:\n\nCellScalarValues([::Type{T}], quad_rule::QuadratureRule, function_space::FunctionSpace, [geometric_space::FunctionSpace])\nCellVectorValues([::Type{T}], quad_rule::QuadratureRule, function_space::FunctionSpace, [geometric_space::FunctionSpace])\n\nArguments:\n\nT: an optional argument to determine the type the internal data is stored as.\nquad_rule: an instance of a QuadratureRule\nfunction_space: an instance of a FunctionSpace used to interpolate the approximated function\ngeometric_space: an optional instance of a FunctionSpace which is used to interpolate the geometry\n\nCommon methods:\n\nreinit!\ngetnquadpoints\ngetquadrule\ngetfunctionspace\ngetgeometricspace\ngetdetJdV\nshape_value\nshape_gradient\nshape_symmetric_gradient\nshape_divergence\nfunction_value\nfunction_gradient\nfunction_symmetric_gradient\nfunction_divergence\nspatial_coordinate\n\n\n\n"
+    "text": "A CellValues object facilitates the process of evaluating values of shape functions, gradients of shape functions, values of nodal functions, gradients and divergences of nodal functions etc. in the finite element cell. There are two different types of CellValues: CellScalarValues and CellVectorValues. As the names suggest, CellScalarValues utilizes scalar shape functions and CellVectorValues utilizes vectorial shape functions. For a scalar field, the CellScalarValues type should be used. For vector field, both subtypes can be used.\n\nConstructors:\n\nCellScalarValues([::Type{T}], quad_rule::QuadratureRule, func_interpol::Interpolation, [geom_interpol::Interpolation])\nCellVectorValues([::Type{T}], quad_rule::QuadratureRule, func_interpol::Interpolation, [geom_interpol::Interpolation])\n\nArguments:\n\nT: an optional argument to determine the type the internal data is stored as.\nquad_rule: an instance of a QuadratureRule\nfunc_interpol: an instance of an Interpolation used to interpolate the approximated function\ngeom_interpol: an optional instance of a Interpolation which is used to interpolate the geometry\n\nCommon methods:\n\nreinit!\ngetnquadpoints\ngetquadrule\ngetfunctioninterpolation\ngetgeometryinterpolation\ngetdetJdV\nshape_value\nshape_gradient\nshape_symmetric_gradient\nshape_divergence\nfunction_value\nfunction_gradient\nfunction_symmetric_gradient\nfunction_divergence\nspatial_coordinate\n\n\n\n"
 },
 
 {
@@ -157,7 +157,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Main Types",
     "title": "JuAFEM.BoundaryValues",
     "category": "Type",
-    "text": "A BoundaryValues object facilitates the process of evaluating values shape functions, gradients of shape functions, values of nodal functions, gradients and divergences of nodal functions etc. on the finite element boundary. There are two different types of BoundaryValues: BoundaryScalarValues and BoundaryVectorValues. As the names suggest, BoundaryScalarValues utilizes scalar shape functions and BoundaryVectorValues utilizes vectorial shape functions. For a scalar field, the BoundaryScalarValues type should be used. For vector field, both subtypes can be used.\n\nConstructors:\n\nNote: The quadrature rule for the boundary should be given with one dimension lower. I.e. for a 3D case, the quadrature rule should be in 2D.\n\nBoundaryScalarValues([::Type{T}], quad_rule::QuadratureRule, function_space::FunctionSpace, [geometric_space::FunctionSpace])\nBoundaryVectorValues([::Type{T}], quad_rule::QuadratureRule, function_space::FunctionSpace, [geometric_space::FunctionSpace])\n\nArguments:\n\nT: an optional argument to determine the type the internal data is stored as.\nquad_rule: an instance of a QuadratureRule\nfunction_space: an instance of a FunctionSpace used to interpolate the approximated function\ngeometric_space: an optional instance of a FunctionSpace which is used to interpolate the geometry\n\nCommon methods:\n\nreinit!\ngetboundarynumber\ngetnquadpoints\ngetquadrule\ngetfunctionspace\ngetgeometricspace\ngetdetJdV\nshape_value\nshape_gradient\nshape_symmetric_gradient\nshape_divergence\nfunction_value\nfunction_gradient\nfunction_symmetric_gradient\nfunction_divergence\nspatial_coordinate\n\n\n\n"
+    "text": "A BoundaryValues object facilitates the process of evaluating values of shape functions, gradients of shape functions, values of nodal functions, gradients and divergences of nodal functions etc. on the finite element boundary. There are two different types of BoundaryValues: BoundaryScalarValues and BoundaryVectorValues. As the names suggest, BoundaryScalarValues utilizes scalar shape functions and BoundaryVectorValues utilizes vectorial shape functions. For a scalar field, the BoundaryScalarValues type should be used. For vector field, both subtypes can be used.\n\nConstructors:\n\nNote: The quadrature rule for the boundary should be given with one dimension lower. I.e. for a 3D case, the quadrature rule should be in 2D.\n\nBoundaryScalarValues([::Type{T}], quad_rule::QuadratureRule, func_interpol::Interpolation, [geom_interpol::Interpolation])\nBoundaryVectorValues([::Type{T}], quad_rule::QuadratureRule, func_interpol::Interpolation, [geom_interpol::Interpolation])\n\nArguments:\n\nT: an optional argument to determine the type the internal data is stored as.\nquad_rule: an instance of a QuadratureRule\nfunc_interpol: an instance of an Interpolation used to interpolate the approximated function\ngeom_interpol: an optional instance of an Interpolation which is used to interpolate the geometry\n\nCommon methods:\n\nreinit!\ngetboundarynumber\ngetnquadpoints\ngetquadrule\ngetfunctioninterpolation\ngetgeometryinterpolation\ngetdetJdV\nshape_value\nshape_gradient\nshape_symmetric_gradient\nshape_divergence\nfunction_value\nfunction_gradient\nfunction_symmetric_gradient\nfunction_divergence\nspatial_coordinate\n\n\n\n"
 },
 
 {
@@ -165,7 +165,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Main Types",
     "title": "Main Types",
     "category": "section",
-    "text": "Pages = [\"maintypes.md\"]AbstractRefShape\nQuadratureRule\nFunctionSpace\nCellValues\nBoundaryValues"
+    "text": "Pages = [\"maintypes.md\"]AbstractRefShape\nQuadratureRule\nInterpolation\nCellValues\nBoundaryValues"
 },
 
 {
@@ -213,7 +213,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.getnbasefunctions",
     "category": "Function",
-    "text": "Returns the number of base functions for a FunctionSpace or Values object.\n\n\n\n"
+    "text": "Returns the number of base functions for an Interpolation or Values object.\n\n\n\n"
 },
 
 {
@@ -221,7 +221,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.getdim",
     "category": "Function",
-    "text": "Returns the dimension of a FunctionSpace\n\n\n\n"
+    "text": "Returns the dimension of an Interpolation\n\n\n\n"
 },
 
 {
@@ -229,7 +229,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.getrefshape",
     "category": "Function",
-    "text": "Returns the reference shape of a FunctionSpace\n\n\n\n"
+    "text": "Returns the reference shape of an Interpolation\n\n\n\n"
 },
 
 {
@@ -237,13 +237,13 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.getorder",
     "category": "Function",
-    "text": "Returns the polynomial order of the FunctionSpace\n\n\n\n"
+    "text": "Returns the polynomial order of the Interpolation\n\n\n\n"
 },
 
 {
-    "location": "lib/utility_functions.html#FunctionSpace-1",
+    "location": "lib/utility_functions.html#Interpolation-1",
     "page": "Utilities",
-    "title": "FunctionSpace",
+    "title": "Interpolation",
     "category": "section",
     "text": "getnbasefunctions\ngetdim\ngetrefshape\ngetorder"
 },
@@ -273,19 +273,19 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/utility_functions.html#JuAFEM.getfunctionspace",
+    "location": "lib/utility_functions.html#JuAFEM.getfunctioninterpolation",
     "page": "Utilities",
-    "title": "JuAFEM.getfunctionspace",
+    "title": "JuAFEM.getfunctioninterpolation",
     "category": "Function",
-    "text": "The function space for the Values type.\n\ngetfunctionspace(fe_v::Values)\n\nArguments\n\nfe_v: the Values object\n\nResults\n\n::FunctionSpace: the function space\n\n\n\n"
+    "text": "The function interpolation for the Values type.\n\ngetfunctioninterpolation(fe_v::Values)\n\nArguments\n\nfe_v: the Values object\n\nResults\n\n::Interpolation: the function interpolation\n\n\n\n"
 },
 
 {
-    "location": "lib/utility_functions.html#JuAFEM.getgeometricspace",
+    "location": "lib/utility_functions.html#JuAFEM.getgeometryinterpolation",
     "page": "Utilities",
-    "title": "JuAFEM.getgeometricspace",
+    "title": "JuAFEM.getgeometryinterpolation",
     "category": "Function",
-    "text": "The function space used for geometric interpolation for the Values type.\n\ngetgeometricspace(fe_v::Values)\n\nArguments\n\nfe_v: the Values object\n\nResults\n\n::FunctionSpace: the geometric interpolation function space\n\n\n\n"
+    "text": "The interpolation used for the geometry for the Values type.\n\ngetgeometryinterpolation(fe_v::Values)\n\nArguments\n\nfe_v: the Values object\n\nResults\n\n::Interpolation: the geometry interpolation\n\n\n\n"
 },
 
 {
@@ -365,7 +365,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.spatial_coordinate",
     "category": "Function",
-    "text": "spatial_coordinate{dim, T}(fe_v::Values{dim}, q_point::Int, x::Vector{Vec{dim, T}})\n\nComputes the spatial coordinate in a quadrature point.\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nx: the nodal coordinates of the cell\n\nResults:\n\n::Vec{dim, T}: the spatial coordinate\n\nDetails:\n\nThe coordinate is computed, using the geometric interpolation space, as mathbfx = sumlimits_i = 1^n M_i (mathbfx) mathbfhatx_i\n\n\n\n"
+    "text": "spatial_coordinate{dim, T}(fe_v::Values{dim}, q_point::Int, x::Vector{Vec{dim, T}})\n\nComputes the spatial coordinate in a quadrature point.\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nx: the nodal coordinates of the cell\n\nResults:\n\n::Vec{dim, T}: the spatial coordinate\n\nDetails:\n\nThe coordinate is computed, using the geometric interpolation, as mathbfx = sumlimits_i = 1^n M_i (mathbfx) mathbfhatx_i\n\n\n\n"
 },
 
 {
@@ -373,7 +373,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "CellValues",
     "category": "section",
-    "text": "reinit!\ngetnquadpoints\ngetquadrule\ngetfunctionspace\ngetgeometricspace\ngetdetJdV\n\nshape_value\nshape_gradient\nshape_symmetric_gradient\nshape_divergence\n\nfunction_value\nfunction_gradient\nfunction_symmetric_gradient\nfunction_divergence\nspatial_coordinate"
+    "text": "reinit!\ngetnquadpoints\ngetquadrule\ngetfunctioninterpolation\ngetgeometryinterpolation\ngetdetJdV\n\nshape_value\nshape_gradient\nshape_symmetric_gradient\nshape_divergence\n\nfunction_value\nfunction_gradient\nfunction_symmetric_gradient\nfunction_divergence\nspatial_coordinate"
 },
 
 {
@@ -381,7 +381,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.getboundarynumber",
     "category": "Function",
-    "text": "The boundary number for a cell, typically used to get the boundary number which is needed to reinit! a BoundaryValues object for  boundary integration\n\ngetboundarynumber(boundary_nodes, cell_nodes, fs::FunctionSpace)\n\n** Arguments **\n\nboundary_nodes: the node numbers of the nodes on the boundary of the cell\ncell_nodes: the node numbers of the cell\nfs: the FunctionSpace for the cell\n\n** Results **\n\n::Int: the corresponding boundary\n\n\n\n"
+    "text": "The boundary number for a cell, typically used to get the boundary number which is needed to reinit! a BoundaryValues object for  boundary integration\n\ngetboundarynumber(boundary_nodes, cell_nodes, ip::Interpolation)\n\n** Arguments **\n\nboundary_nodes: the node numbers of the nodes on the boundary of the cell\ncell_nodes: the node numbers of the cell\nip: the Interpolation for the cell\n\n** Results **\n\n::Int: the corresponding boundary\n\n\n\n"
 },
 
 {
@@ -389,7 +389,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.getcurrentboundary",
     "category": "Function",
-    "text": "The current active boundary of the BoundaryValues type.\n\ngetcurrentboundary(bv::BoundaryScalarValues)\n\n** Arguments **\n\nbv: the BoundaryValues object\n\n** Results **\n\n::Int: the current active boundary (from last reinit!).\n\n\n\n"
+    "text": "The current active boundary of the BoundaryValues type.\n\ngetcurrentboundary(bv::BoundaryValues)\n\n** Arguments **\n\nbv: the BoundaryValues object\n\n** Results **\n\n::Int: the current active boundary (from last reinit!).\n\n\n\n"
 },
 
 {
@@ -405,7 +405,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "WriteVTK.vtk_grid",
     "category": "Function",
-    "text": "Creates an unstructured VTK grid from the element topology and coordinates.\n\nvtk_grid{dim,T}(filename::AbstractString, coords::Vector{Vec{dim,T}}, topology::Matrix{Int}, celltype::VTKCellTypes.VTKCellType)\n\nArguments\n\nfilename: name (or path) of the file when it is saved to disk, eg filename = \"myfile\", or filename = \"/results/myfile\" to store it in the folder results\ncoords: a vector of the node coordinates\ntopology: a matrix where each column contains the nodes which connects the element\ncelltype: the definition of the celltype in the grid, see https://github.com/jipolanco/WriteVTK.jl#defining-cells\n\nResults:\n\n::DatasetFile\n\nExample:\n\njulia> coords = [Vec{2}((0.0,0.0)), Vec{2}((1.0,0.0)), Vec{2}((1.5,1.5)), Vec{2}((0.0,1.0))]\n4-element Array{ContMechTensors.Tensor{1,2,Float64,2},1}:\n [0.0,0.0]\n [1.0,0.0]\n [1.5,1.5]\n [0.0,1.0]\n\njulia> topology = [1 2 4; 2 3 4]'\n3×2 Array{Int64,2}:\n 1  2\n 2  3\n 4  4\n\njulia> celltype = VTKCellTypes.VTK_TRIANGLE;\n\njulia> vtkobj = vtk_grid(\"example\", coords, topology, celltype);\n\njulia> vtk_save(vtkobj)\n1-element Array{String,1}:\n \"example.vtu\"\n\nDetails\n\nThis is a thin wrapper around the vtk_grid function from the WriteVTK package.\n\nFor information how to add cell data and point data to the resulting VTK object as well as how to write it to a file see https://github.com/jipolanco/WriteVTK.jl#generating-an-unstructured-vtk-file\n\n\n\n"
+    "text": "Creates an unstructured VTK grid from the element topology and coordinates.\n\nvtk_grid{dim,T}(filename::AbstractString, coords::Vector{Vec{dim,T}}, topology::Matrix{Int}, celltype::VTKCellTypes.VTKCellType)\n\nArguments\n\nfilename: name (or path) of the file when it is saved to disk, eg filename = \"myfile\", or filename = \"/results/myfile\" to store it in the folder results\ncoords: a vector of the node coordinates\ntopology: a matrix where each column contains the nodes which connects the element\ncelltype: the definition of the celltype in the grid, see https://github.com/jipolanco/WriteVTK.jl#defining-cells\n\nResults:\n\n::DatasetFile\n\nExample:\n\njulia> coords = [Vec{2}((0.0,0.0)), Vec{2}((1.0,0.0)), Vec{2}((1.5,1.5)), Vec{2}((0.0,1.0))]\n4-element Array{ContMechTensors.Tensor{1,2,Float64,2},1}:\n [0.0,0.0]\n [1.0,0.0]\n [1.5,1.5]\n [0.0,1.0]\n\njulia> topology = [1 2 4; 2 3 4]'\n3×2 Array{Int64,2}:\n 1  2\n 2  3\n 4  4\n\njulia> celltype = VTKCellTypes.VTK_TRIANGLE;\n\njulia> vtkobj = vtk_grid(\"example\", coords, topology, celltype);\n\njulia> vtk_save(vtkobj)\n1-element Array{String,1}:\n \"example.vtu\"\n\nDetails\n\nThis is a thin wrapper around the function vtk_grid from the WriteVTK package.\n\nFor information how to add cell data and point data to the resulting VTK object as well as how to write it to a file see https://github.com/jipolanco/WriteVTK.jl#generating-an-unstructured-vtk-file\n\n\n\n"
 },
 
 {
@@ -413,7 +413,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.getVTKtype",
     "category": "Function",
-    "text": "Returns the VTKCellType corresponding to the input FunctionSpace\n\ngetVTKtype(fs::FunctionSpace)\n\nArguments\n\nfs: The function space\n\nResults:\n\n::VTKCellType: The cell type, see https://github.com/jipolanco/WriteVTK.jl#generating-an-unstructured-vtk-file\n\nExample:\n\njulia> fs = Lagrange{2, RefCube, 1}()\nJuAFEM.Lagrange{2,JuAFEM.RefCube,1}()\n\njulia> getVTKtype(fs)\nWriteVTK.VTKCellTypes.VTKCellType(\"VTK_QUAD\",0x09,4)\n\n\n\n"
+    "text": "Returns the VTKCellType corresponding to the input Interpolation\n\ngetVTKtype(ip::Interpolation)\n\nArguments\n\nip: The interpolation\n\nResults:\n\n::VTKCellType: The cell type, see https://github.com/jipolanco/WriteVTK.jl#generating-an-unstructured-vtk-file\n\nExample:\n\njulia> ip = Lagrange{2, RefCube, 1}()\nJuAFEM.Lagrange{2,JuAFEM.RefCube,1}()\n\njulia> getVTKtype(ip)\nWriteVTK.VTKCellTypes.VTKCellType(\"VTK_QUAD\",0x09,4)\n\n\n\n"
 },
 
 {
