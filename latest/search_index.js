@@ -401,11 +401,43 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/utility_functions.html#JuAFEM.start_assemble",
+    "page": "Utilities",
+    "title": "JuAFEM.start_assemble",
+    "category": "Function",
+    "text": "start_assemble([N=0]) -> Assembler\n\nCall before starting an assembly.\n\nReturns an Assembler type that is used to hold the intermediate data before an assembly is finished.\n\n\n\n"
+},
+
+{
+    "location": "lib/utility_functions.html#JuAFEM.assemble!",
+    "page": "Utilities",
+    "title": "JuAFEM.assemble!",
+    "category": "Function",
+    "text": "assemble!(a, Ke, edof)\n\nAssembles the element matrix Ke into a.\n\n\n\nassemble!(g, ge, edof)\n\nAssembles the element residual ge into the global residual vector g.\n\n\n\n"
+},
+
+{
+    "location": "lib/utility_functions.html#JuAFEM.end_assemble",
+    "page": "Utilities",
+    "title": "JuAFEM.end_assemble",
+    "category": "Function",
+    "text": "end_assemble(a::Assembler) -> K\n\nFinalizes an assembly. Returns a sparse matrix with the assembled values.\n\n\n\n"
+},
+
+{
+    "location": "lib/utility_functions.html#Assembling-1",
+    "page": "Utilities",
+    "title": "Assembling",
+    "category": "section",
+    "text": "start_assemble\nassemble!\nend_assemble"
+},
+
+{
     "location": "lib/utility_functions.html#WriteVTK.vtk_grid",
     "page": "Utilities",
     "title": "WriteVTK.vtk_grid",
     "category": "Function",
-    "text": "Creates an unstructured VTK grid from the element topology and coordinates.\n\nvtk_grid{dim,T}(filename::AbstractString, coords::Vector{Vec{dim,T}}, topology::Matrix{Int}, celltype::VTKCellTypes.VTKCellType)\n\nArguments\n\nfilename: name (or path) of the file when it is saved to disk, eg filename = \"myfile\", or filename = \"/results/myfile\" to store it in the folder results\ncoords: a vector of the node coordinates\ntopology: a matrix where each column contains the nodes which connects the element\ncelltype: the definition of the celltype in the grid, see https://github.com/jipolanco/WriteVTK.jl#defining-cells\n\nResults:\n\n::DatasetFile\n\nExample:\n\njulia> coords = [Vec{2}((0.0,0.0)), Vec{2}((1.0,0.0)), Vec{2}((1.5,1.5)), Vec{2}((0.0,1.0))]\n4-element Array{ContMechTensors.Tensor{1,2,Float64,2},1}:\n [0.0,0.0]\n [1.0,0.0]\n [1.5,1.5]\n [0.0,1.0]\n\njulia> topology = [1 2 4; 2 3 4]'\n3×2 Array{Int64,2}:\n 1  2\n 2  3\n 4  4\n\njulia> celltype = VTKCellTypes.VTK_TRIANGLE;\n\njulia> vtkobj = vtk_grid(\"example\", coords, topology, celltype);\n\njulia> vtk_save(vtkobj)\n1-element Array{String,1}:\n \"example.vtu\"\n\nDetails\n\nThis is a thin wrapper around the function vtk_grid from the WriteVTK package.\n\nFor information how to add cell data and point data to the resulting VTK object as well as how to write it to a file see https://github.com/jipolanco/WriteVTK.jl#generating-an-unstructured-vtk-file\n\n\n\n"
+    "text": "Creates an unstructured VTK grid from the element topology and coordinates.\n\nvtk_grid{dim,T}(filename::AbstractString, coords::Vector{Vec{dim,T}}, topology::Matrix{Int}, celltype::VTKCellTypes.VTKCellType)\n\nArguments\n\nfilename: name (or path) of the file when it is saved to disk, eg filename = \"myfile\", or filename = \"/results/myfile\" to store it in the folder results\ncoords: a vector of the node coordinates\ntopology: a matrix where each column contains the nodes which connects the element\ncelltype: the definition of the celltype in the grid, see https://github.com/jipolanco/WriteVTK.jl#defining-cells\n\nResults:\n\n::DatasetFile\n\nExample:\n\njulia> coords = [Vec{2}((0.0,0.0)), Vec{2}((1.0,0.0)), Vec{2}((1.5,1.5)), Vec{2}((0.0,1.0))]\n4-element Array{ContMechTensors.Tensor{1,2,Float64,2},1}:\n [0.0,0.0]\n [1.0,0.0]\n [1.5,1.5]\n [0.0,1.0]\n\njulia> topology = [1 2 4; 2 3 4]';\n\njulia> celltype = VTKCellTypes.VTK_TRIANGLE;\n\njulia> vtkobj = vtk_grid(\"example\", coords, topology, celltype);\n\njulia> vtk_save(vtkobj)\n1-element Array{String,1}:\n \"example.vtu\"\n\nDetails\n\nThis is a thin wrapper around the function vtk_grid from the WriteVTK package.\n\nFor information how to add cell data and point data to the resulting VTK object as well as how to write it to a file see https://github.com/jipolanco/WriteVTK.jl#generating-an-unstructured-vtk-file\n\n\n\n"
 },
 
 {
