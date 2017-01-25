@@ -333,7 +333,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.function_value",
     "category": "Function",
-    "text": "Computes the value in a quadrature point for a scalar or vector valued function\n\nfunction_value{dim, T}(fe_v::Values{dim}, q_point::Int, u::Vector{T})\nfunction_value{dim, T}(fe_v::Values{dim}, q_point::Int, u::Vector{Vec{dim, T}})\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nu: the value of the function in the nodes\n\nResults:\n\n::Number: the value of a scalar valued function\n::Vec{dim, T} the value of a vector valued function\n\nDetails:\n\nThe value of a scalar valued function is computed as u(mathbfx) = sumlimits_i = 1^n N_i (mathbfx) u_i where u_i are the value of u in the nodes. For a vector valued function the value is calculated as mathbfu(mathbfx) = sumlimits_i = 1^n N_i (mathbfx) mathbfu_i where mathbfu_i are the nodal values of mathbfu.\n\n\n\n"
+    "text": "Computes the value in a quadrature point for a scalar or vector valued function\n\nfunction_value{dim, T}(fe_v::Values{dim}, q_point::Int, u::AbstractVector{T})\nfunction_value{dim, T}(fe_v::Values{dim}, q_point::Int, u::AbstractVector{Vec{dim, T}})\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nu: the value of the function in the nodes\n\nResults:\n\n::Number: the value of a scalar valued function\n::Vec{dim, T} the value of a vector valued function\n\nDetails:\n\nThe value of a scalar valued function is computed as u(mathbfx) = sumlimits_i = 1^n N_i (mathbfx) u_i where u_i are the value of u in the nodes. For a vector valued function the value is calculated as mathbfu(mathbfx) = sumlimits_i = 1^n N_i (mathbfx) mathbfu_i where mathbfu_i are the nodal values of mathbfu.\n\n\n\n"
 },
 
 {
@@ -341,7 +341,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.function_gradient",
     "category": "Function",
-    "text": "Computes the gradient in a quadrature point for a scalar or vector valued function\n\nfunction_scalar_gradient{dim, T}(fe_v::Values{dim}, q_point::Int, u::Vector{T})\nfunction_vector_gradient{dim, T}(fe_v::Values{dim}, q_point::Int, u::Vector{Vec{dim, T}})\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nu: the value of the function in the nodes\n\nResults:\n\n::Vec{dim, T}: the gradient of a scalar valued function\n::Tensor{2, dim, T}: the gradient of a vector valued function\n\nDetails:\n\nThe gradient of a scalar function is computed as mathbfnabla u(mathbfx) = sumlimits_i = 1^n mathbfnabla N_i (mathbfx) u_i where u_i are the nodal values of the function. For a vector valued function the gradient is computed as mathbfnabla mathbfu(mathbfx) = sumlimits_i = 1^n mathbfnabla N_i (mathbfx) otimes mathbfu_i where mathbfu_i are the nodal values of mathbfu.\n\n\n\n"
+    "text": "Computes the gradient in a quadrature point for a scalar or vector valued function\n\nfunction_scalar_gradient{dim, T}(fe_v::Values{dim}, q_point::Int, u::AbstractVector{T})\nfunction_vector_gradient{dim, T}(fe_v::Values{dim}, q_point::Int, u::AbstractVector{Vec{dim, T}})\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nu: the value of the function in the nodes\n\nResults:\n\n::Vec{dim, T}: the gradient of a scalar valued function\n::Tensor{2, dim, T}: the gradient of a vector valued function\n\nDetails:\n\nThe gradient of a scalar function is computed as mathbfnabla u(mathbfx) = sumlimits_i = 1^n mathbfnabla N_i (mathbfx) u_i where u_i are the nodal values of the function. For a vector valued function the gradient is computed as mathbfnabla mathbfu(mathbfx) = sumlimits_i = 1^n mathbfnabla N_i (mathbfx) otimes mathbfu_i where mathbfu_i are the nodal values of mathbfu.\n\n\n\n"
 },
 
 {
@@ -349,7 +349,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.function_symmetric_gradient",
     "category": "Function",
-    "text": "Computes the symmetric gradient for a vector valued function in a quadrature point.\n\nfunction_symmetric_gradient{dim, T}(fe_v::Values{dim}, q_point::Int, u::Vector{Vec{dim, T}})\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nu: the value of the function in the nodes\n\nResults:\n\n::SymmetricTensor{2, dim, T}: the symmetric gradient\n\nDetails:\n\nThe symmetric gradient of a scalar function is computed as\n\nleft mathbfnabla  mathbfu(mathbfx_q) right^textsym =  sumlimits_i = 1^n  frac12 left mathbfnabla N_i (mathbfx_q) otimes mathbfu_i + mathbfu_i  otimes  mathbfnabla N_i (mathbfx_q) right\n\nwhere mathbfu_i are the nodal values of the function.\n\n\n\n"
+    "text": "Computes the symmetric gradient for a vector valued function in a quadrature point.\n\nfunction_symmetric_gradient{dim, T}(fe_v::Values{dim}, q_point::Int, u::AbstractVector{Vec{dim, T}})\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nu: the value of the function in the nodes\n\nResults:\n\n::SymmetricTensor{2, dim, T}: the symmetric gradient\n\nDetails:\n\nThe symmetric gradient of a scalar function is computed as\n\nleft mathbfnabla  mathbfu(mathbfx_q) right^textsym =  sumlimits_i = 1^n  frac12 left mathbfnabla N_i (mathbfx_q) otimes mathbfu_i + mathbfu_i  otimes  mathbfnabla N_i (mathbfx_q) right\n\nwhere mathbfu_i are the nodal values of the function.\n\n\n\n"
 },
 
 {
@@ -357,7 +357,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.function_divergence",
     "category": "Function",
-    "text": "Computes the divergence in a quadrature point for a vector valued function.\n\nfunction_divergence{dim, T}(fe_v::Values{dim}, q_point::Int, u::Vector{Vec{dim, T}})\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nu: the value of the function in the nodes\n\nResults:\n\n::Number: the divergence of the function\n\nDetails:\n\nThe divergence of a vector valued functions in the quadrature point mathbfx_q) is computed as\n\nmathbfnabla cdot mathbfu(mathbfx_q) = sumlimits_i = 1^n mathbfnabla N_i (mathbfx_q) cdot mathbfu_i\n\nwhere mathbfu_i are the nodal values of the function.\n\n\n\n"
+    "text": "Computes the divergence in a quadrature point for a vector valued function.\n\nfunction_divergence{dim, T}(fe_v::Values{dim}, q_point::Int, u::AbstractVector{Vec{dim, T}})\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nu: the value of the function in the nodes\n\nResults:\n\n::Number: the divergence of the function\n\nDetails:\n\nThe divergence of a vector valued functions in the quadrature point mathbfx_q) is computed as\n\nmathbfnabla cdot mathbfu(mathbfx_q) = sumlimits_i = 1^n mathbfnabla N_i (mathbfx_q) cdot mathbfu_i\n\nwhere mathbfu_i are the nodal values of the function.\n\n\n\n"
 },
 
 {
@@ -365,7 +365,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.spatial_coordinate",
     "category": "Function",
-    "text": "spatial_coordinate{dim, T}(fe_v::Values{dim}, q_point::Int, x::Vector{Vec{dim, T}})\n\nComputes the spatial coordinate in a quadrature point.\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nx: the nodal coordinates of the cell\n\nResults:\n\n::Vec{dim, T}: the spatial coordinate\n\nDetails:\n\nThe coordinate is computed, using the geometric interpolation, as mathbfx = sumlimits_i = 1^n M_i (mathbfx) mathbfhatx_i\n\n\n\n"
+    "text": "spatial_coordinate{dim, T}(fe_v::Values{dim}, q_point::Int, x::AbstractVector{Vec{dim, T}})\n\nComputes the spatial coordinate in a quadrature point.\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nx: the nodal coordinates of the cell\n\nResults:\n\n::Vec{dim, T}: the spatial coordinate\n\nDetails:\n\nThe coordinate is computed, using the geometric interpolation, as mathbfx = sumlimits_i = 1^n M_i (mathbfx) mathbfhatx_i\n\n\n\n"
 },
 
 {
