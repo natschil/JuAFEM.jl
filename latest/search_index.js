@@ -349,7 +349,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.function_symmetric_gradient",
     "category": "Function",
-    "text": "Computes the symmetric gradient for a vector valued function in a quadrature point.\n\nfunction_symmetric_gradient{dim, T}(fe_v::Values{dim}, q_point::Int, u::AbstractVector{Vec{dim, T}})\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nu: the value of the function in the nodes\n\nResults:\n\n::SymmetricTensor{2, dim, T}: the symmetric gradient\n\nDetails:\n\nThe symmetric gradient of a scalar function is computed as\n\nleft mathbfnabla  mathbfu(mathbfx_q) right^textsym =  sumlimits_i = 1^n  frac12 left mathbfnabla N_i (mathbfx_q) otimes mathbfu_i + mathbfu_i  otimes  mathbfnabla N_i (mathbfx_q) right\n\nwhere mathbfu_i are the nodal values of the function.\n\n\n\n"
+    "text": "Computes the symmetric gradient for a vector valued function in a quadrature point.\n\nfunction_symmetric_gradient(fe_v::Values, q_point::Int, u::AbstractVector)\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nu: the value of the function in the nodes\n\nResults:\n\n::SymmetricTensor{2, dim, T}: the symmetric gradient\n\nDetails:\n\nThe symmetric gradient of a scalar function is computed as\n\nleft mathbfnabla  mathbfu(mathbfx_q) right^textsym =  sumlimits_i = 1^n  frac12 left mathbfnabla N_i (mathbfx_q) otimes mathbfu_i + mathbfu_i  otimes  mathbfnabla N_i (mathbfx_q) right\n\nwhere mathbfu_i are the nodal values of the function.\n\n\n\n"
 },
 
 {
