@@ -125,7 +125,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Main Types",
     "title": "JuAFEM.AbstractRefShape",
     "category": "Type",
-    "text": "Represents a reference shape which quadrature rules and interpolations are defined on. Currently, the only concrete types that subtype this type are RefCube in 1,2 and 3 dimensions, and RefTetrahedron in 2 and 3 dimensions.\n\n\n\n"
+    "text": "Represents a reference shape which quadrature rules and interpolations are defined on. Currently, the only concrete types that subtype this type are RefCube in 1, 2 and 3 dimensions, and RefTetrahedron in 2 and 3 dimensions.\n\n\n\n"
 },
 
 {
@@ -413,15 +413,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "WriteVTK.vtk_grid",
     "category": "Function",
-    "text": "Creates an unstructured VTK grid from the element topology and coordinates.\n\nvtk_grid{dim,T}(filename::AbstractString, coords::Vector{Vec{dim,T}}, topology::Matrix{Int}, celltype::VTKCellTypes.VTKCellType)\n\nArguments\n\nfilename: name (or path) of the file when it is saved to disk, eg filename = \"myfile\", or filename = \"/results/myfile\" to store it in the folder results\ncoords: a vector of the node coordinates\ntopology: a matrix where each column contains the nodes which connects the element\ncelltype: the definition of the celltype in the grid, see https://github.com/jipolanco/WriteVTK.jl#defining-cells\n\nResults:\n\n::DatasetFile\n\nExample:\n\njulia> coords = [Vec{2}((0.0,0.0)), Vec{2}((1.0,0.0)), Vec{2}((1.5,1.5)), Vec{2}((0.0,1.0))];\n\njulia> topology = [1 2 4; 2 3 4]';\n\njulia> celltype = VTKCellTypes.VTK_TRIANGLE;\n\njulia> vtkobj = vtk_grid(\"example\", coords, topology, celltype);\n\njulia> vtk_save(vtkobj)\n1-element Array{String,1}:\n \"example.vtu\"\n\nDetails\n\nThis is a thin wrapper around the function vtk_grid from the WriteVTK package.\n\nFor information how to add cell data and point data to the resulting VTK object as well as how to write it to a file see https://github.com/jipolanco/WriteVTK.jl#generating-an-unstructured-vtk-file\n\n\n\n"
-},
-
-{
-    "location": "lib/utility_functions.html#JuAFEM.getVTKtype",
-    "page": "Utilities",
-    "title": "JuAFEM.getVTKtype",
-    "category": "Function",
-    "text": "Returns the VTKCellType corresponding to the input Interpolation\n\ngetVTKtype(ip::Interpolation)\n\nArguments\n\nip: The interpolation\n\nResults:\n\n::VTKCellType: The cell type, see https://github.com/jipolanco/WriteVTK.jl#generating-an-unstructured-vtk-file\n\nExample:\n\njulia> ip = Lagrange{2, RefCube, 1}()\nJuAFEM.Lagrange{2,JuAFEM.RefCube,1}()\n\njulia> getVTKtype(ip)\nWriteVTK.VTKCellTypes.VTKCellType(\"VTK_QUAD\", 0x09, 4)\n\n\n\n"
+    "text": "vtk_grid(filename::AbstractString, grid::Grid)\n\nCreate a unstructured VTK grid from a Grid. Return a DatasetFile which data can be appended to, see vtk_point_data, vtk_cell_data.\n\n\n\n"
 },
 
 {
@@ -429,7 +421,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "VTK",
     "category": "section",
-    "text": "vtk_grid\ngetVTKtype"
+    "text": "vtk_grid"
 },
 
 {
