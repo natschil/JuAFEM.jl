@@ -157,7 +157,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Main Types",
     "title": "JuAFEM.FaceValues",
     "category": "Type",
-    "text": "A FaceValues object facilitates the process of evaluating values of shape functions, gradients of shape functions, values of nodal functions, gradients and divergences of nodal functions etc. on the faces of finite elements. There are two different types of FaceValues: FaceScalarValues and FaceVectorValues. As the names suggest, FaceScalarValues utilizes scalar shape functions and FaceVectorValues utilizes vectorial shape functions. For a scalar field, the FaceScalarValues type should be used. For vector field, both subtypes can be used.\n\nConstructors:\n\nNote: The quadrature rule for the face should be given with one dimension lower. I.e. for a 3D case, the quadrature rule should be in 2D.\n\nFaceScalarValues([::Type{T}], quad_rule::QuadratureRule, func_interpol::Interpolation, [geom_interpol::Interpolation])\nFaceVectorValues([::Type{T}], quad_rule::QuadratureRule, func_interpol::Interpolation, [geom_interpol::Interpolation])\n\nArguments:\n\nT: an optional argument to determine the type the internal data is stored as.\nquad_rule: an instance of a QuadratureRule\nfunc_interpol: an instance of an Interpolation used to interpolate the approximated function\ngeom_interpol: an optional instance of an Interpolation which is used to interpolate the geometry\n\nCommon methods:\n\nreinit!\ngetfacenumber\ngetnquadpoints\ngetdetJdV\nshape_value\nshape_gradient\nshape_symmetric_gradient\nshape_divergence\nfunction_value\nfunction_gradient\nfunction_symmetric_gradient\nfunction_divergence\nspatial_coordinate\n\n\n\n"
+    "text": "A FaceValues object facilitates the process of evaluating values of shape functions, gradients of shape functions, values of nodal functions, gradients and divergences of nodal functions etc. on the faces of finite elements. There are two different types of FaceValues: FaceScalarValues and FaceVectorValues. As the names suggest, FaceScalarValues utilizes scalar shape functions and FaceVectorValues utilizes vectorial shape functions. For a scalar field, the FaceScalarValues type should be used. For vector field, both subtypes can be used.\n\nConstructors:\n\nNote: The quadrature rule for the face should be given with one dimension lower. I.e. for a 3D case, the quadrature rule should be in 2D.\n\nFaceScalarValues([::Type{T}], quad_rule::QuadratureRule, func_interpol::Interpolation, [geom_interpol::Interpolation])\nFaceVectorValues([::Type{T}], quad_rule::QuadratureRule, func_interpol::Interpolation, [geom_interpol::Interpolation])\n\nArguments:\n\nT: an optional argument to determine the type the internal data is stored as.\nquad_rule: an instance of a QuadratureRule\nfunc_interpol: an instance of an Interpolation used to interpolate the approximated function\ngeom_interpol: an optional instance of an Interpolation which is used to interpolate the geometry\n\nCommon methods:\n\nreinit!\ngetnquadpoints\ngetdetJdV\nshape_value\nshape_gradient\nshape_symmetric_gradient\nshape_divergence\nfunction_value\nfunction_gradient\nfunction_symmetric_gradient\nfunction_divergence\nspatial_coordinate\n\n\n\n"
 },
 
 {
@@ -353,14 +353,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/utility_functions.html#JuAFEM.getfacenumber",
-    "page": "Utilities",
-    "title": "JuAFEM.getfacenumber",
-    "category": "Function",
-    "text": "The face number for a cell, typically used to get the face number which is needed to reinit! a FaceValues object for  face integration\n\ngetfacenumber(face_nodes, cell_nodes, ip::Interpolation)\n\n** Arguments **\n\nface_nodes: the node numbers of the nodes on the face of the cell\ncell_nodes: the node numbers of the cell\nip: the Interpolation for the cell\n\n** Results **\n\n::Int: the corresponding face\n\n\n\n"
-},
-
-{
     "location": "lib/utility_functions.html#JuAFEM.getcurrentface",
     "page": "Utilities",
     "title": "JuAFEM.getcurrentface",
@@ -373,7 +365,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "FaceValues",
     "category": "section",
-    "text": "All of the methods for CellValues apply for FaceValues as well. In addition, there are some methods that are unique for FaecValues:getfacenumber\ngetcurrentface"
+    "text": "All of the methods for CellValues apply for FaceValues as well. In addition, there are some methods that are unique for FaecValues:getcurrentface"
 },
 
 {
