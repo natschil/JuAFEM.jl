@@ -133,7 +133,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Main Types",
     "title": "JuAFEM.QuadratureRule",
     "category": "Type",
-    "text": "A QuadratureRule is used to approximate an integral on a domain by a weighted sum of function values at specific points:\n\nintlimits_Omega f(mathbfx) textd Omega approx sumlimits_q = 1^n_q f(mathbfx_q) w_q\n\nThe quadrature rule consists of n_q points in space mathbfx_q with corresponding weights w_q.\n\nThere are different rules to determine the points and weights. In JuAFEM two different types are implemented: :legendre and :lobatto, where :lobatto is only supported for RefCube. If the quadrature rule type is left out, :legendre is used by default.\n\nIn JuAFEM, the QuadratureRule type is mostly used as one of the components to create a CellValues or FaceValues object.\n\nConstructor:\n\nQuadratureRule{dim, shape}([quad_rule_type::Symbol], order::Int)\n\nArguments:\n\ndim: the space dimension of the reference shape\nshape: an AbstractRefShape\nquad_rule_type: :legendre or :lobatto, defaults to :legendre.\norder: the order of the quadrature rule\n\nCommon methods:\n\ngetpoints : the points of the quadrature rule\ngetweights : the weights of the quadrature rule\n\nExample:\n\njulia> QuadratureRule{2, RefTetrahedron}(1)\nJuAFEM.QuadratureRule{2,JuAFEM.RefTetrahedron,Float64}([0.5], Tensors.Tensor{1,2,Float64,2}[[0.333333, 0.333333]])\n\njulia> QuadratureRule{1, RefCube}(:lobatto, 2)\nJuAFEM.QuadratureRule{1,JuAFEM.RefCube,Float64}([1.0, 1.0], Tensors.Tensor{1,1,Float64,1}[[-1.0], [1.0]])\n\n\n\n"
+    "text": "QuadratureRule{dim,shape}([quad_rule_type::Symbol], order::Int)\n\nCreate a QuadratureRule used for integration. dim is the space dimension, shape an AbstractRefShape and order the order of the quadrature rule. quad_rule_type is an optional argument determining the type of quadrature rule, currently the :legendre and :lobatto rules are implemented.\n\nA QuadratureRule is used to approximate an integral on a domain by a weighted sum of function values at specific points:\n\nintlimits_Omega f(mathbfx) textd Omega approx sumlimits_q = 1^n_q f(mathbfx_q) w_q\n\nThe quadrature rule consists of n_q points in space mathbfx_q with corresponding weights w_q.\n\nIn JuAFEM, the QuadratureRule type is mostly used as one of the components to create a CellValues or FaceValues object.\n\nCommon methods:\n\ngetpoints : the points of the quadrature rule\ngetweights : the weights of the quadrature rule\n\nExample:\n\njulia> QuadratureRule{2, RefTetrahedron}(1)\nJuAFEM.QuadratureRule{2,JuAFEM.RefTetrahedron,Float64}([0.5], Tensors.Tensor{1,2,Float64,2}[[0.333333, 0.333333]])\n\njulia> QuadratureRule{1, RefCube}(:lobatto, 2)\nJuAFEM.QuadratureRule{1,JuAFEM.RefCube,Float64}([1.0, 1.0], Tensors.Tensor{1,1,Float64,1}[[-1.0], [1.0]])\n\n\n\n"
 },
 
 {
@@ -141,7 +141,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Main Types",
     "title": "JuAFEM.Interpolation",
     "category": "Type",
-    "text": "An Interpolation is used to define shape functions to interpolate a function between nodes.\n\nConstructor:\n\nInterpolation{dim, reference_shape, order}()\n\nArguments:\n\ndim: the dimension the interpolation lives in\nshape: a reference shape, see AbstractRefShape\norder: the highest order term in the polynomial\n\nThe following interpolations are implemented:\n\nLagrange{1, RefCube, 1}\nLagrange{1, RefCube, 2}\nLagrange{2, RefCube, 1}\nLagrange{2, RefCube, 2}\nLagrange{2, RefTetrahedron, 1}\nLagrange{2, RefTetrahedron, 2}\nLagrange{3, RefCube, 1}\nSerendipity{2, RefCube, 2}\nLagrange{3, RefTetrahedron, 1}\nLagrange{3, RefTetrahedron, 2}\n\nCommon methods:\n\ngetnbasefunctions\ngetdim\ngetrefshape\ngetorder\n\nExample:\n\njulia> ip = Lagrange{2, RefTetrahedron, 2}()\nJuAFEM.Lagrange{2,JuAFEM.RefTetrahedron,2}()\n\njulia> getnbasefunctions(ip)\n6\n\n\n\n"
+    "text": "Interpolation{dim, ref_shape, order}()\n\nReturn an Interpolation of given dimension dim, reference shape (see see AbstractRefShape) ref_shape and order order. order corresponds to the highest order term in the polynomial. The interpolation is used to define shape functions to interpolate a function between nodes.\n\nThe following interpolations are implemented:\n\nLagrange{1,RefCube,1}\nLagrange{1,RefCube,2}\nLagrange{2,RefCube,1}\nLagrange{2,RefCube,2}\nLagrange{2,RefTetrahedron,1}\nLagrange{2,RefTetrahedron,2}\nLagrange{3,RefCube,1}\nSerendipity{2,RefCube,2}\nLagrange{3,RefTetrahedron,1}\nLagrange{3,RefTetrahedron,2}\n\nCommon methods:\n\ngetnbasefunctions\ngetdim\ngetrefshape\ngetorder\n\nExamples\n\njulia> ip = Lagrange{2,RefTetrahedron,2}()\nJuAFEM.Lagrange{2,JuAFEM.RefTetrahedron,2}()\n\njulia> getnbasefunctions(ip)\n6\n\n\n\n"
 },
 
 {
@@ -149,7 +149,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Main Types",
     "title": "JuAFEM.CellValues",
     "category": "Type",
-    "text": "A CellValues object facilitates the process of evaluating values of shape functions, gradients of shape functions, values of nodal functions, gradients and divergences of nodal functions etc. in the finite element cell. There are two different types of CellValues: CellScalarValues and CellVectorValues. As the names suggest, CellScalarValues utilizes scalar shape functions and CellVectorValues utilizes vectorial shape functions. For a scalar field, the CellScalarValues type should be used. For vector field, both subtypes can be used.\n\nConstructors:\n\nCellScalarValues([::Type{T}], quad_rule::QuadratureRule, func_interpol::Interpolation, [geom_interpol::Interpolation])\nCellVectorValues([::Type{T}], quad_rule::QuadratureRule, func_interpol::Interpolation, [geom_interpol::Interpolation])\n\nArguments:\n\nT: an optional argument to determine the type the internal data is stored as.\nquad_rule: an instance of a QuadratureRule\nfunc_interpol: an instance of an Interpolation used to interpolate the approximated function\ngeom_interpol: an optional instance of a Interpolation which is used to interpolate the geometry\n\nCommon methods:\n\nreinit!\ngetnquadpoints\ngetdetJdV\nshape_value\nshape_gradient\nshape_symmetric_gradient\nshape_divergence\nfunction_value\nfunction_gradient\nfunction_symmetric_gradient\nfunction_divergence\nspatial_coordinate\n\n\n\n"
+    "text": "CellScalarValues([::Type{T}], quad_rule::QuadratureRule, func_interpol::Interpolation, [geom_interpol::Interpolation])\nCellVectorValues([::Type{T}], quad_rule::QuadratureRule, func_interpol::Interpolation, [geom_interpol::Interpolation])\n\nA CellValues object facilitates the process of evaluating values of shape functions, gradients of shape functions, values of nodal functions, gradients and divergences of nodal functions etc. in the finite element cell. There are two different types of CellValues: CellScalarValues and CellVectorValues. As the names suggest, CellScalarValues utilizes scalar shape functions and CellVectorValues utilizes vectorial shape functions. For a scalar field, the CellScalarValues type should be used. For vector field, both subtypes can be used.\n\nArguments:\n\nT: an optional argument (default to Float64) to determine the type the internal data is stored as.\nquad_rule: an instance of a QuadratureRule\nfunc_interpol: an instance of an Interpolation used to interpolate the approximated function\ngeom_interpol: an optional instance of a Interpolation which is used to interpolate the geometry\n\nCommon methods:\n\nreinit!\ngetnquadpoints\ngetdetJdV\nshape_value\nshape_gradient\nshape_symmetric_gradient\nshape_divergence\nfunction_value\nfunction_gradient\nfunction_symmetric_gradient\nfunction_divergence\nspatial_coordinate\n\n\n\n"
 },
 
 {
@@ -157,7 +157,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Main Types",
     "title": "JuAFEM.FaceValues",
     "category": "Type",
-    "text": "A FaceValues object facilitates the process of evaluating values of shape functions, gradients of shape functions, values of nodal functions, gradients and divergences of nodal functions etc. on the faces of finite elements. There are two different types of FaceValues: FaceScalarValues and FaceVectorValues. As the names suggest, FaceScalarValues utilizes scalar shape functions and FaceVectorValues utilizes vectorial shape functions. For a scalar field, the FaceScalarValues type should be used. For vector field, both subtypes can be used.\n\nConstructors:\n\nNote: The quadrature rule for the face should be given with one dimension lower. I.e. for a 3D case, the quadrature rule should be in 2D.\n\nFaceScalarValues([::Type{T}], quad_rule::QuadratureRule, func_interpol::Interpolation, [geom_interpol::Interpolation])\nFaceVectorValues([::Type{T}], quad_rule::QuadratureRule, func_interpol::Interpolation, [geom_interpol::Interpolation])\n\nArguments:\n\nT: an optional argument to determine the type the internal data is stored as.\nquad_rule: an instance of a QuadratureRule\nfunc_interpol: an instance of an Interpolation used to interpolate the approximated function\ngeom_interpol: an optional instance of an Interpolation which is used to interpolate the geometry\n\nCommon methods:\n\nreinit!\ngetnquadpoints\ngetdetJdV\nshape_value\nshape_gradient\nshape_symmetric_gradient\nshape_divergence\nfunction_value\nfunction_gradient\nfunction_symmetric_gradient\nfunction_divergence\nspatial_coordinate\n\n\n\n"
+    "text": "FaceScalarValues([::Type{T}], quad_rule::QuadratureRule, func_interpol::Interpolation, [geom_interpol::Interpolation])\nFaceVectorValues([::Type{T}], quad_rule::QuadratureRule, func_interpol::Interpolation, [geom_interpol::Interpolation])\n\nA FaceValues object facilitates the process of evaluating values of shape functions, gradients of shape functions, values of nodal functions, gradients and divergences of nodal functions etc. on the faces of finite elements. There are two different types of FaceValues: FaceScalarValues and FaceVectorValues. As the names suggest, FaceScalarValues utilizes scalar shape functions and FaceVectorValues utilizes vectorial shape functions. For a scalar field, the FaceScalarValues type should be used. For vector field, both subtypes can be used.\n\nnote: Note\nThe quadrature rule for the face should be given with one dimension lower. I.e. for a 3D case, the quadrature rule should be in 2D.\n\nArguments:\n\nT: an optional argument to determine the type the internal data is stored as.\nquad_rule: an instance of a QuadratureRule\nfunc_interpol: an instance of an Interpolation used to interpolate the approximated function\ngeom_interpol: an optional instance of an Interpolation which is used to interpolate the geometry\n\nCommon methods:\n\nreinit!\ngetnquadpoints\ngetdetJdV\nshape_value\nshape_gradient\nshape_symmetric_gradient\nshape_divergence\nfunction_value\nfunction_gradient\nfunction_symmetric_gradient\nfunction_divergence\nspatial_coordinate\n\n\n\n"
 },
 
 {
@@ -189,7 +189,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.getpoints",
     "category": "Function",
-    "text": "The points of the quadrature rule.\n\ngetpoints(qr::QuadratureRule)\n\nArguments:\n\nqr: the quadrature rule\n\nExample:\n\njulia> qr = QuadratureRule{2, RefTetrahedron}(:legendre, 2);\n\njulia> getpoints(qr)\n3-element Array{Tensors.Tensor{1,2,Float64,2},1}:\n [0.166667, 0.166667]\n [0.166667, 0.666667]\n [0.666667, 0.166667]\n\n\n\n"
+    "text": "getpoints(qr::QuadratureRule)\n\nReturn the points of the quadrature rule.\n\nExamples\n\njulia> qr = QuadratureRule{2, RefTetrahedron}(:legendre, 2);\n\njulia> getpoints(qr)\n3-element Array{Tensors.Tensor{1,2,Float64,2},1}:\n [0.166667, 0.166667]\n [0.166667, 0.666667]\n [0.666667, 0.166667]\n\n\n\n"
 },
 
 {
@@ -197,7 +197,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.getweights",
     "category": "Function",
-    "text": "The weights of the quadrature rule.\n\ngetweights(qr::QuadratureRule) = qr.weights\n\nArguments:\n\nqr: the quadrature rule\n\nExample:\n\njulia> qr = QuadratureRule{2, RefTetrahedron}(:legendre, 2);\n\njulia> getweights(qr)\n3-element Array{Float64,1}:\n 0.166667\n 0.166667\n 0.166667\n\n\n\n"
+    "text": "getweights(qr::QuadratureRule)\n\nReturn the weights of the quadrature rule.\n\nExamples\n\njulia> qr = QuadratureRule{2, RefTetrahedron}(:legendre, 2);\n\njulia> getweights(qr)\n3-element Array{Float64,1}:\n 0.166667\n 0.166667\n 0.166667\n\n\n\n"
 },
 
 {
@@ -213,7 +213,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.getnbasefunctions",
     "category": "Function",
-    "text": "Returns the number of base functions for an Interpolation or Values object.\n\n\n\n"
+    "text": "Return the number of base functions for an Interpolation or Values object.\n\n\n\n"
 },
 
 {
@@ -221,7 +221,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.getdim",
     "category": "Function",
-    "text": "Returns the dimension of an Interpolation\n\n\n\n"
+    "text": "Return the dimension of an Interpolation\n\n\n\n"
 },
 
 {
@@ -229,7 +229,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.getrefshape",
     "category": "Function",
-    "text": "Returns the reference shape of an Interpolation\n\n\n\n"
+    "text": "Return the reference shape of an Interpolation\n\n\n\n"
 },
 
 {
@@ -237,7 +237,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.getorder",
     "category": "Function",
-    "text": "Returns the polynomial order of the Interpolation\n\n\n\n"
+    "text": "Return the polynomial order of the Interpolation\n\n\n\n"
 },
 
 {
@@ -253,7 +253,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.reinit!",
     "category": "Function",
-    "text": "Updates a CellValues/FaceValues object for a cell or face.\n\nreinit!{dim, T}(cv::CellValues{dim}, x::Vector{Vec{dim, T}})\nreinit!{dim, T}(bv::FaceValues{dim}, x::Vector{Vec{dim, T}}, face::Int)\n\nArguments:\n\ncv/bv: the CellValues/FaceValues object\nx: a Vector of Vec, one for each nodal position in the element.\nface: an integer to specify which face of the cell\n\nResult\n\nnothing\n\nDetails\n\n\n\n"
+    "text": "reinit!(cv::CellValues, x::Vector)\nreinit!(bv::FaceValues, x::Vector, face::Int)\n\nUpdate the CellValues/FaceValues object for a cell or face with coordinates x. The derivatives of the shape functions, and the new integration weights are computed.\n\n\n\n"
 },
 
 {
@@ -261,7 +261,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.getnquadpoints",
     "category": "Function",
-    "text": "The number of quadrature points for  the Values type.\n\ngetnquadpoints(fe_v::Values)\n\n\n\n"
+    "text": "getnquadpoints(fe_v::Values)\n\nReturn the number of quadrature points for the Values object.\n\n\n\n"
 },
 
 {
@@ -269,7 +269,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.getdetJdV",
     "category": "Function",
-    "text": "The product between the determinant of the Jacobian and the quadrature point weight for a given quadrature point: det(J(mathbfx)) w_q\n\ngetdetJdV(fe_v::Values, quadrature_point::Int)\n\n** Arguments:**\n\nfe_v: the Values object\nquadrature_point The quadrature point number\n\nResults:\n\n::Number\n\nDetails:\n\nThis value is typically used when one integrates a function on a finite element cell or face as\n\nintlimits_Omega f(mathbfx) d Omega approx sumlimits_q = 1^n_q f(mathbfx_q) det(J(mathbfx)) w_q intlimits_Gamma f(mathbfx) d Gamma approx sumlimits_q = 1^n_q f(mathbfx_q) det(J(mathbfx)) w_q\n\n\n\n"
+    "text": "getdetJdV(fe_v::Values, q_point::Int)\n\nReturn the product between the determinant of the Jacobian and the quadrature point weight for the given quadrature point: det(J(mathbfx)) w_q\n\nThis value is typically used when one integrates a function on a finite element cell or face as\n\nintlimits_Omega f(mathbfx) d Omega approx sumlimits_q = 1^n_q f(mathbfx_q) det(J(mathbfx)) w_q intlimits_Gamma f(mathbfx) d Gamma approx sumlimits_q = 1^n_q f(mathbfx_q) det(J(mathbfx)) w_q\n\n\n\n"
 },
 
 {
@@ -277,7 +277,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.shape_value",
     "category": "Function",
-    "text": "Computes the value of the shape function\n\nshape_value(fe_v::Values, quadrature_point::Int, base_function::Int)\n\nGets the values of the shape function for a given quadrature point and base_func\n\n\n\n"
+    "text": "shape_value(fe_v::Values, q_point::Int, base_function::Int)\n\nReturn the value of shape function base_function evaluated in quadrature point q_point.\n\n\n\n"
 },
 
 {
@@ -285,7 +285,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.shape_gradient",
     "category": "Function",
-    "text": "Get the gradient of the shape functions for a given quadrature point and base function\n\n\n\n"
+    "text": "shape_gradient(fe_v::Values, q_point::Int, base_function::Int)\n\nReturn the gradient of shape function base_function evaluated in quadrature point q_point.\n\n\n\n"
 },
 
 {
@@ -293,7 +293,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.shape_symmetric_gradient",
     "category": "Function",
-    "text": "Get the symmetric gradient of the shape functions for a given quadrature point and base function\n\n\n\n"
+    "text": "shape_symmetric_gradient(fe_v::Values, q_point::Int, base_function::Int)\n\nReturn the symmetric gradient of shape function base_function evaluated in quadrature point q_point.\n\n\n\n"
 },
 
 {
@@ -301,7 +301,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.shape_divergence",
     "category": "Function",
-    "text": "Get the divergence of the shape functions for a given quadrature point and base function\n\n\n\n"
+    "text": "shape_divergence(fe_v::Values, q_point::Int, base_function::Int)\n\nReturn the divergence of shape function base_function evaluated in quadrature point q_point.\n\n\n\n"
 },
 
 {
@@ -309,7 +309,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.function_value",
     "category": "Function",
-    "text": "Computes the value in a quadrature point for a scalar or vector valued function\n\nfunction_value{dim, T}(fe_v::Values{dim}, q_point::Int, u::AbstractVector{T})\nfunction_value{dim, T}(fe_v::Values{dim}, q_point::Int, u::AbstractVector{Vec{dim, T}})\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nu: the value of the function in the nodes\n\nResults:\n\n::Number: the value of a scalar valued function\n::Vec{dim, T} the value of a vector valued function\n\nDetails:\n\nThe value of a scalar valued function is computed as u(mathbfx) = sumlimits_i = 1^n N_i (mathbfx) u_i where u_i are the value of u in the nodes. For a vector valued function the value is calculated as mathbfu(mathbfx) = sumlimits_i = 1^n N_i (mathbfx) mathbfu_i where mathbfu_i are the nodal values of mathbfu.\n\n\n\n"
+    "text": "function_value(fe_v::Values, q_point::Int, u::AbstractVector)\n\nCompute the value of the function in a quadrature point. u is a vector with values for the degrees of freedom. For a scalar valued function, u contains scalars. For a vector valued function, u can be a vector of scalars (for use of VectorValues) or u can be a vector of Vecs (for use with ScalarValues).\n\nThe value of a scalar valued function is computed as u(mathbfx) = sumlimits_i = 1^n N_i (mathbfx) u_i where u_i are the value of u in the nodes. For a vector valued function the value is calculated as mathbfu(mathbfx) = sumlimits_i = 1^n N_i (mathbfx) mathbfu_i where mathbfu_i are the nodal values of mathbfu.\n\n\n\n"
 },
 
 {
@@ -317,7 +317,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.function_gradient",
     "category": "Function",
-    "text": "Computes the gradient in a quadrature point for a scalar or vector valued function\n\nfunction_scalar_gradient{dim, T}(fe_v::Values{dim}, q_point::Int, u::AbstractVector{T})\nfunction_vector_gradient{dim, T}(fe_v::Values{dim}, q_point::Int, u::AbstractVector{Vec{dim, T}})\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nu: the value of the function in the nodes\n\nResults:\n\n::Vec{dim, T}: the gradient of a scalar valued function\n::Tensor{2, dim, T}: the gradient of a vector valued function\n\nDetails:\n\nThe gradient of a scalar function is computed as mathbfnabla u(mathbfx) = sumlimits_i = 1^n mathbfnabla N_i (mathbfx) u_i where u_i are the nodal values of the function. For a vector valued function the gradient is computed as mathbfnabla mathbfu(mathbfx) = sumlimits_i = 1^n mathbfnabla N_i (mathbfx) otimes mathbfu_i where mathbfu_i are the nodal values of mathbfu.\n\n\n\n"
+    "text": "function_scalar_gradient(fe_v::Values{dim}, q_point::Int, u::AbstractVector)\n\nCompute the gradient of the function in a quadrature point. u is a vector with values for the degrees of freedom. For a scalar valued function, u contains scalars. For a vector valued function, u can be a vector of scalars (for use of VectorValues) or u can be a vector of Vecs (for use with ScalarValues).\n\nThe gradient of a scalar function is computed as mathbfnabla u(mathbfx) = sumlimits_i = 1^n mathbfnabla N_i (mathbfx) u_i where u_i are the nodal values of the function. For a vector valued function the gradient is computed as mathbfnabla mathbfu(mathbfx) = sumlimits_i = 1^n mathbfnabla N_i (mathbfx) otimes mathbfu_i where mathbfu_i are the nodal values of mathbfu.\n\n\n\n"
 },
 
 {
@@ -325,7 +325,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.function_symmetric_gradient",
     "category": "Function",
-    "text": "Computes the symmetric gradient for a vector valued function in a quadrature point.\n\nfunction_symmetric_gradient(fe_v::Values, q_point::Int, u::AbstractVector)\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nu: the value of the function in the nodes\n\nResults:\n\n::SymmetricTensor{2, dim, T}: the symmetric gradient\n\nDetails:\n\nThe symmetric gradient of a scalar function is computed as\n\nleft mathbfnabla  mathbfu(mathbfx_q) right^textsym =  sumlimits_i = 1^n  frac12 left mathbfnabla N_i (mathbfx_q) otimes mathbfu_i + mathbfu_i  otimes  mathbfnabla N_i (mathbfx_q) right\n\nwhere mathbfu_i are the nodal values of the function.\n\n\n\n"
+    "text": "function_symmetric_gradient(fe_v::Values, q_point::Int, u::AbstractVector)\n\nCompute the symmetric gradient of the function, see function_gradient. Return a SymmetricTensor.\n\nThe symmetric gradient of a scalar function is computed as left mathbfnabla  mathbfu(mathbfx_q) right^textsym =  sumlimits_i = 1^n  frac12 left mathbfnabla N_i (mathbfx_q) otimes mathbfu_i + mathbfu_i  otimes  mathbfnabla N_i (mathbfx_q) right where mathbfu_i are the nodal values of the function.\n\n\n\n"
 },
 
 {
@@ -333,7 +333,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.function_divergence",
     "category": "Function",
-    "text": "Computes the divergence in a quadrature point for a vector valued function.\n\nfunction_divergence{dim, T}(fe_v::Values{dim}, q_point::Int, u::AbstractVector{Vec{dim, T}})\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nu: the value of the function in the nodes\n\nResults:\n\n::Number: the divergence of the function\n\nDetails:\n\nThe divergence of a vector valued functions in the quadrature point mathbfx_q) is computed as\n\nmathbfnabla cdot mathbfu(mathbfx_q) = sumlimits_i = 1^n mathbfnabla N_i (mathbfx_q) cdot mathbfu_i\n\nwhere mathbfu_i are the nodal values of the function.\n\n\n\n"
+    "text": "function_divergence(fe_v::Values, q_point::Int, u::AbstractVector)\n\nCompute the divergence of the vector valued function in a quadrature point.\n\nThe divergence of a vector valued functions in the quadrature point mathbfx_q) is computed as mathbfnabla cdot mathbfu(mathbfx_q) = sumlimits_i = 1^n mathbfnabla N_i (mathbfx_q) cdot mathbfu_i where mathbfu_i are the nodal values of the function.\n\n\n\n"
 },
 
 {
@@ -341,7 +341,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.spatial_coordinate",
     "category": "Function",
-    "text": "spatial_coordinate{dim, T}(fe_v::Values{dim}, q_point::Int, x::AbstractVector{Vec{dim, T}})\n\nComputes the spatial coordinate in a quadrature point.\n\nArguments:\n\nfe_v: the Values object\nq_point: the quadrature point number\nx: the nodal coordinates of the cell\n\nResults:\n\n::Vec{dim, T}: the spatial coordinate\n\nDetails:\n\nThe coordinate is computed, using the geometric interpolation, as mathbfx = sumlimits_i = 1^n M_i (mathbfx) mathbfhatx_i\n\n\n\n"
+    "text": "spatial_coordinate(fe_v::Values{dim}, q_point::Int, x::AbstractVector)\n\nCompute the spatial coordinate in a quadrature point. x contains the nodal coordinates of the cell.\n\nThe coordinate is computed, using the geometric interpolation, as mathbfx = sumlimits_i = 1^n M_i (mathbfx) mathbfhatx_i\n\n\n\n"
 },
 
 {
@@ -357,7 +357,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "JuAFEM.getcurrentface",
     "category": "Function",
-    "text": "The current active face of the FaceValues type.\n\ngetcurrentface(fv::FaceValues)\n\n** Arguments **\n\nfv: the FaceValues object\n\n** Results **\n\n::Int: the current active face (from last reinit!).\n\n\n\n"
+    "text": "getcurrentface(fv::FaceValues)\n\nReturn the current active face of the FaceValues object (from last reinit!).\n\n\n\n"
 },
 
 {
@@ -405,7 +405,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Utilities",
     "title": "WriteVTK.vtk_grid",
     "category": "Function",
-    "text": "vtk_grid(filename::AbstractString, grid::Grid)\n\nCreate a unstructured VTK grid from a Grid. Return a DatasetFile which data can be appended to, see vtk_point_data, vtk_cell_data.\n\n\n\n"
+    "text": "vtk_grid(filename::AbstractString, grid::Grid)\n\nCreate a unstructured VTK grid from a Grid. Return a DatasetFile which data can be appended to, see vtk_point_data and vtk_cell_data.\n\n\n\n"
 },
 
 {
