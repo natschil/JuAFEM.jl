@@ -13,12 +13,12 @@ close!(dh)
 
 K = create_sparsity_pattern(dh)
 
-dbcs = DirichletBoundaryConditions(dh)
+ch = ConstraintHandler(dh)
 ∂Ω = union(getfaceset.(grid, ["left", "right", "top", "bottom"])...)
 dbc = DirichletBoundaryCondition(:u, ∂Ω, (x, t) -> 0)
-add!(dbcs, dbc)
-close!(dbcs)
-update!(dbcs, 0.0)
+add!(ch, dbc)
+close!(ch)
+update!(ch, 0.0)
 
 function doassemble(cellvalues::CellScalarValues{dim}, K::SparseMatrixCSC, dh::DofHandler) where {dim}
     n_basefuncs = getnbasefunctions(cellvalues)
@@ -53,7 +53,7 @@ function doassemble(cellvalues::CellScalarValues{dim}, K::SparseMatrixCSC, dh::D
 end
 
 K, f = doassemble(cellvalues, K, dh)
-apply!(K, f, dbcs)
+apply!(K, f, ch)
 u = K \ f
 
 vtk_grid("heat_equation", dh) do vtk
