@@ -15,7 +15,7 @@ K = create_sparsity_pattern(dh)
 
 ch = ConstraintHandler(dh)
 ∂Ω = union(getfaceset.(grid, ["left", "right", "top", "bottom"])...)
-dbc = DirichletBoundaryCondition(:u, ∂Ω, (x, t) -> 0)
+dbc = Dirichlet(:u, ∂Ω, (x, t) -> 0)
 add!(ch, dbc)
 close!(ch)
 update!(ch, 0.0)
