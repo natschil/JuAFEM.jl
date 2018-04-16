@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Heat equation · JuAFEM.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>JuAFEM.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../man/fe_intro.html">Introduction to FEM</a></li><li><a class="toctext" href="../../man/getting_started.html">Getting started</a></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../../lib/maintypes.html">Main Types</a></li><li><a class="toctext" href="../../lib/utility_functions.html">Utilities</a></li></ul></li><li><span class="toctext">Examples</span><ul><li class="current"><a class="toctext" href="heat_equation.html">Heat equation</a><ul class="internal"><li><a class="toctext" href="#Introduction-1">Introduction</a></li><li><a class="toctext" href="#Commented-program-1">Commented program</a></li><li><a class="toctext" href="#heat_equation-plain-program-1">Plain program</a></li></ul></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Examples</li><li><a href="heat_equation.html">Heat equation</a></li></ul><a class="edit-page" href="https://github.com/KristofferC/JuAFEM.jl/blob/master/docs/src/examples/heat_equation.jl"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Heat equation</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Heat-equation-1" href="#Heat-equation-1">Heat equation</a></h1><p><img src="../../../../examples/figures/heat_square.png" alt/></p><div class="admonition tip"><div class="admonition-title">Tip</div><div class="admonition-text"><p>This example is also available as a Jupyter notebook: <a href="https://nbviewer.jupyter.org/github/KristofferC/JuAFEM.jl/blob/gh-pages/latest/generated/heat_equation.ipynb"><code>heat_equation.ipynb</code></a></p></div></div><h2><a class="nav-anchor" id="Introduction-1" href="#Introduction-1">Introduction</a></h2><p>The heat equation is the &quot;Hello, world!&quot; equation of finite elements. Here we solve the equation on a unit square, with a uniform internal source. The strong form of the (linear) heat equation is given by</p><div>\[- \nabla \cdot (k \nabla u) = f  \quad x \in \Omega,\]</div><p>where <span>$u$</span> is the unknown temperature field, <span>$k$</span> the heat conductivity, <span>$f$</span> the heat source and <span>$\Omega$</span> the domain. For simplicity we set <span>$f = 1$</span> and <span>$k = 1$</span>. We will consider homogeneous Dirichlet boundary conditions such that</p><div>\[u(x) = 0 \quad x \in \partial \Omega,\]</div><p>where <span>$\partial \Omega$</span> denotes the boundary of <span>$\Omega$</span>.</p><p>The resulting weak form is given by</p><div>\[\int_{\Omega} \nabla v \cdot \nabla u \ d\Omega = \int_{\Omega} v \ d\Omega,\]</div><p>where <span>$v$</span> is a suitable test function.</p><h2><a class="nav-anchor" id="Commented-program-1" href="#Commented-program-1">Commented program</a></h2><p>Now we solve the problem in JuAFEM. What follows is a program spliced with comments. The full program, without comments, can be found in the next <a href="heat_equation.html#heat_equation-plain-program-1">section</a>.</p><p>First we load the JuAFEM package.</p><div><pre><code class="language-julia">using JuAFEM</code></pre></div><p>We start  generating a simple grid with 20x20 quadrilateral elements using <code>generate_grid</code>. The generator defaults to the unit square, so we don&#39;t need to specify the corners of the domain.</p><div><pre><code class="language-julia">grid = generate_grid(Quadrilateral, (20, 20));</code></pre></div><h3><a class="nav-anchor" id="Trial-and-test-functions-1" href="#Trial-and-test-functions-1">Trial and test functions</a></h3><p>A <code>CellValues</code> facilitates the process of evaluating values and gradients of test and trial functions (among other things). Since the problem is a scalar problem we will use a <code>CellScalarValues</code> object. To define this we need to specify an interpolation space for the shape functions. We use Lagrange functions (both for interpolating the function and the geometry) based on the reference &quot;cube&quot;. We also define a quadrature rule based on the same reference cube. We combine the interpolation and the quadrature rule to a <code>CellScalarValues</code> object.</p><div><pre><code class="language-julia">dim = 2
+ip = Lagrange{dim, RefCube, 1}()
+qr = QuadratureRule{dim, RefCube}(2)
+cellvalues = CellScalarValues(qr, ip);</code></pre></div><h3><a class="nav-anchor" id="Degrees-of-freedom-1" href="#Degrees-of-freedom-1">Degrees of freedom</a></h3><p>Next we need to define a <code>DofHandler</code>, which will take care of numbering and distribution of degrees of freedom for our approximated fields. We create the <code>DofHandler</code> and then add a single field called <code>u</code>. Lastly we <code>close!</code> the <code>DofHandler</code>, it is now that the dofs are distributed for all the elements.</p><div><pre><code class="language-julia">dh = DofHandler(grid)
+push!(dh, :u, 1)
+close!(dh);</code></pre></div><p>Now that we have distributed all our dofs we can create our tangent matrix, using <code>create_sparsity_pattern</code>. This function returns a sparse matrix with the correct elements stored.</p><div><pre><code class="language-julia">K = create_sparsity_pattern(dh);</code></pre></div><p>We can inspect the pattern using the <code>spy</code> function from <code>UnicodePlots.jl</code>. By default the stored values are set to <span>$0$</span>, so we first need to fill the stored values, e.g. <code>K.nzval</code> with something meaningful.</p><div><pre><code class="language-julia">using UnicodePlots
+fill!(K.nzval, 1.0)
+spy(K)</code></pre><pre><code class="language-none">                                  Sparsity Pattern
+       ┌──────────────────────────────────────────────────────────────────────┐
+     1 │⠻⣦⡀⠀⠀⠀⠘⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│ &gt; 0
+       │⠀⠈⠻⣦⡀⠀⠀⠘⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│ &lt; 0
+       │⠀⠀⠀⠈⠻⣦⡀⠀⠘⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠶⢤⣀⠀⠀⠈⠻⣦⡀⠘⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠈⠛⠶⣤⣀⠈⠻⣦⠀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠈⠳⣄⠀⠻⣦⡀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⡀⠙⢦⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⡀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠷⣄⠈⠻⣦⡀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⠀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠀⠻⣦⡀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⡀⠙⢦⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⡀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠷⣄⠈⠻⣦⡀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⠀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠀⠻⣦⡀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⡀⠙⢦⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⡀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠷⣄⠈⠻⣦⡀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⠀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠀⠻⣦⡀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⡀⠙⢦⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⡀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠷⣄⠈⠻⣦⡀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⠀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠀⠻⣦⡀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⡀⠙⢦⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⡀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠷⣄⠈⠻⣦⡀⠙⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⠀⠙⢦⡀⠀⠀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠀⠻⣦⡀⠙⢦⡀⠀⠀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⡀⠙⢦⡀⠀⠀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⡀⠙⢦⡀│
+       │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦⡀⠙│
+   441 │⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⣄⠈⠻⣦│
+       └──────────────────────────────────────────────────────────────────────┘
+       1                                                                    441
+                                      nz = 3721</code></pre></div><h3><a class="nav-anchor" id="Boundary-conditions-1" href="#Boundary-conditions-1">Boundary conditions</a></h3><p>In JuAFEM constraints like Dirichlet boundary conditions are handled by a <code>ConstraintHandler</code>.</p><div><pre><code class="language-julia">ch = ConstraintHandler(dh);</code></pre></div><p>Next we need to add constraints to <code>ch</code>. For this problem we define homogeneous Dirichlet boundary conditions on the whole boundary, i.e. the <code>union</code> of all the face sets on the boundary.</p><div><pre><code class="language-julia">∂Ω = union(getfaceset.(grid, [&quot;left&quot;, &quot;right&quot;, &quot;top&quot;, &quot;bottom&quot;])...);</code></pre></div><p>Now we are set up to define our constraint. We specify which field the condition is for, and our combined face set <code>∂Ω</code>. The last argument is a function which takes the spatial coordinate <span>$x$</span> and the current time <span>$t$</span> and returns the prescribed value. In this case it is trivial – no matter what <span>$x$</span> and <span>$t$</span> we return <span>$0$</span>. When we have specified our constraint we <code>add!</code> it to <code>ch</code>.</p><div><pre><code class="language-julia">dbc = Dirichlet(:u, ∂Ω, (x, t) -&gt; 0)
+add!(ch, dbc);</code></pre></div><p>We also need to <code>close!</code> and <code>update!</code> our boundary conditions. When we call <code>close!</code> the dofs which will be constrained by the boundary conditions are calculated and stored in our <code>ch</code> object. Since the boundary conditions are, in this case, independent of time we can <code>update!</code> them directly with e.g. <span>$t = 0$</span>.</p><div><pre><code class="language-julia">close!(ch)
+update!(ch, 0.0);</code></pre></div><h3><a class="nav-anchor" id="Assembling-the-linear-system-1" href="#Assembling-the-linear-system-1">Assembling the linear system</a></h3><p>Now we have all the pieces needed to assemble the linear system, <span>$K u = f$</span>. We define a function, <code>doassemble</code> to do the assembly, which takes our <code>cellvalues</code>, the sparse matrix and our DofHandler as input arguments. The function returns the assembled stiffness matrix, and the force vector.</p><div><pre><code class="language-julia">function doassemble(cellvalues::CellScalarValues{dim}, K::SparseMatrixCSC, dh::DofHandler) where {dim}
+    #&#39; We allocate the element stiffness matrix and element force vector
+    #&#39; just once before looping over all the cells instead of allocating
+    #&#39; them every time in the loop.
+    n_basefuncs = getnbasefunctions(cellvalues)
+    Ke = zeros(n_basefuncs, n_basefuncs)
+    fe = zeros(n_basefuncs)
+
+    #&#39; Next we define the global force vector `f` and use that and
+    #&#39; the stiffness matrix `K` and create an assembler. The assembler
+    #&#39; is just a thin wrapper around `f` and `K` and some extra storage
+    #&#39; to make the assembling faster.
+    f = zeros(ndofs(dh))
+    assembler = start_assemble(K, f)
+
+    #&#39; It is now time to loop over all the cells in our grid. We do this by iterating
+    #&#39; over a `CellIterator`. The iterator caches some useful things for us, for example
+    #&#39; the nodal coordinates for the cell, and the local degrees of freedom.
+    @inbounds for cell in CellIterator(dh)
+        #&#39; Always remember to reset the element stiffness matrix and
+        #&#39; force vector since we reuse them for all elements.
+        fill!(Ke, 0)
+        fill!(fe, 0)
+
+        #&#39; For each cell we also need to reinitialize the cached values in `cellvalues`.
+        reinit!(cellvalues, cell)
+
+        #&#39; It is now time to loop over all the quadrature points in the cell and
+        #&#39; assemble the contribution to `Ke` and `fe`. The integration weight
+        #&#39; can be queried from `cellvalues` by `getdetJdV`.
+        for q_point in 1:getnquadpoints(cellvalues)
+            dΩ = getdetJdV(cellvalues, q_point)
+            #&#39; For each quadrature point we loop over all the (local) shape functions.
+            #&#39; We need the value and gradient of the testfunction `v` and also the gradient
+            #&#39; of the trial function `u`. We get all of these from `cellvalues`.
+            for i in 1:n_basefuncs
+                v  = shape_value(cellvalues, q_point, i)
+                ∇v = shape_gradient(cellvalues, q_point, i)
+                fe[i] += v * dΩ
+                for j in 1:n_basefuncs
+                    ∇u = shape_gradient(cellvalues, q_point, j)
+                    Ke[i, j] += (∇v ⋅ ∇u) * dΩ
+                end
+            end
+        end
+
+        #&#39; The last step in the element loop is to assemble `Ke` and `fe`
+        #&#39; into the global `K` and `f` with `assemble!`.
+        assemble!(assembler, celldofs(cell), fe, Ke)
+    end
+    return K, f
+end</code></pre></div><h3><a class="nav-anchor" id="Solution-of-the-system-1" href="#Solution-of-the-system-1">Solution of the system</a></h3><p>The last step is to solve the system. First we call <code>doassemble</code> to obtain the global stiffness matrix <code>K</code> and force vector <code>f</code>.</p><div><pre><code class="language-julia">K, f = doassemble(cellvalues, K, dh);</code></pre></div><p>To account for the boundary conditions we use the <code>apply!</code> function. This modifies elements in <code>K</code> and <code>f</code> respectively, such that we can get the correct solution vector <code>u</code> by using <code>\</code>.</p><div><pre><code class="language-julia">apply!(K, f, ch)
+u = K \ f;</code></pre></div><h3><a class="nav-anchor" id="Exporting-to-VTK-1" href="#Exporting-to-VTK-1">Exporting to VTK</a></h3><p>To visualize the result we export the grid and our field <code>u</code> to a VTK-file, which can be viewed in e.g. <a href="https://www.paraview.org/">ParaView</a>.</p><div><pre><code class="language-julia">vtk_grid(&quot;heat_equation&quot;, dh) do vtk
+    vtk_point_data(vtk, dh, u)
+end</code></pre></div><h2><a class="nav-anchor" id="heat_equation-plain-program-1" href="#heat_equation-plain-program-1">Plain program</a></h2><p>Below follows a version of the program without any comments. The file is also available here: <a href="heat_equation.jl">heat_equation.jl</a></p><pre><code class="language-julia">using JuAFEM
+
+grid = generate_grid(Quadrilateral, (20, 20));
+
+dim = 2
+ip = Lagrange{dim, RefCube, 1}()
+qr = QuadratureRule{dim, RefCube}(2)
+cellvalues = CellScalarValues(qr, ip);
+
+dh = DofHandler(grid)
+push!(dh, :u, 1)
+close!(dh);
+
+K = create_sparsity_pattern(dh);
+
+using UnicodePlots
+fill!(K.nzval, 1.0)
+spy(K)
+
+ch = ConstraintHandler(dh);
+
+∂Ω = union(getfaceset.(grid, [&quot;left&quot;, &quot;right&quot;, &quot;top&quot;, &quot;bottom&quot;])...);
+
+dbc = Dirichlet(:u, ∂Ω, (x, t) -&gt; 0)
+add!(ch, dbc);
+
+close!(ch)
+update!(ch, 0.0);
+
+function doassemble(cellvalues::CellScalarValues{dim}, K::SparseMatrixCSC, dh::DofHandler) where {dim}
+
+    n_basefuncs = getnbasefunctions(cellvalues)
+    Ke = zeros(n_basefuncs, n_basefuncs)
+    fe = zeros(n_basefuncs)
+
+    f = zeros(ndofs(dh))
+    assembler = start_assemble(K, f)
+
+    @inbounds for cell in CellIterator(dh)
+
+        fill!(Ke, 0)
+        fill!(fe, 0)
+
+        reinit!(cellvalues, cell)
+
+        for q_point in 1:getnquadpoints(cellvalues)
+            dΩ = getdetJdV(cellvalues, q_point)
+
+            for i in 1:n_basefuncs
+                v  = shape_value(cellvalues, q_point, i)
+                ∇v = shape_gradient(cellvalues, q_point, i)
+                fe[i] += v * dΩ
+                for j in 1:n_basefuncs
+                    ∇u = shape_gradient(cellvalues, q_point, j)
+                    Ke[i, j] += (∇v ⋅ ∇u) * dΩ
+                end
+            end
+        end
+
+        assemble!(assembler, celldofs(cell), fe, Ke)
+    end
+    return K, f
+end
+
+K, f = doassemble(cellvalues, K, dh);
+
+apply!(K, f, ch)
+u = K \ f;
+
+vtk_grid(&quot;heat_equation&quot;, dh) do vtk
+    vtk_point_data(vtk, dh, u)
+end</code></pre><footer><hr/><a class="previous" href="../../lib/utility_functions.html"><span class="direction">Previous</span><span class="title">Utilities</span></a></footer></article></body></html>
