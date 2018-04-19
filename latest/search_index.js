@@ -401,6 +401,86 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "examples/generated/threaded_assembly.html#",
+    "page": "Threaded Assembly",
+    "title": "Threaded Assembly",
+    "category": "page",
+    "text": "EditURL = \"https://github.com/KristofferC/JuAFEM.jl/blob/master/docs/src/examples/threaded_assembly.jl\""
+},
+
+{
+    "location": "examples/generated/threaded_assembly.html#Threaded-Assembly-1",
+    "page": "Threaded Assembly",
+    "title": "Threaded Assembly",
+    "category": "section",
+    "text": "tip: Tip\nThis example is also available as a Jupyter notebook: threaded_assembly.ipynb"
+},
+
+{
+    "location": "examples/generated/threaded_assembly.html#Example-of-a-colored-grid-1",
+    "page": "Threaded Assembly",
+    "title": "Example of a colored grid",
+    "category": "section",
+    "text": "Creates a simple 2D grid and colors it. Save the example grid to a VTK file to show the coloring. No cells with the same color has any shared nodes (dofs). This means that it is safe to assemble in parallel as long as we only assemble one color at a time.using JuAFEM\n\nfunction create_example_2d_grid()\n    grid = generate_grid(Quadrilateral, (10, 10), Vec{2}((0.0, 0.0)), Vec{2}((10.0, 10.0)))\n    cell_colors, colors = JuAFEM.create_coloring(grid)\n    vtk_grid(\"colored\", grid) do vtk\n        JuAFEM.vtk_cell_data_colors(vtk, grid, colors)\n    end\nend;\n\ncreate_example_2d_grid()(Image: )"
+},
+
+{
+    "location": "examples/generated/threaded_assembly.html#Cantilever-beam-in-3D-with-threaded-assembly-1",
+    "page": "Threaded Assembly",
+    "title": "Cantilever beam in 3D with threaded assembly",
+    "category": "section",
+    "text": "We will now look at an example where we assemble the stiffness matrix using multiple threads. We set up a simple grid and create a coloring, then create a DofHandler, and define the material stiffness"
+},
+
+{
+    "location": "examples/generated/threaded_assembly.html#Grid-for-the-beam-1",
+    "page": "Threaded Assembly",
+    "title": "Grid for the beam",
+    "category": "section",
+    "text": "function create_colored_cantilever_grid(celltype, n)\n    grid = generate_grid(celltype, (10*n, n, n), Vec{3}((0.0, 0.0, 0.0)), Vec{3}((10.0, 1.0, 1.0)))\n    cell_colors, final_colors = JuAFEM.create_coloring(grid)\n    return grid, final_colors\nend;"
+},
+
+{
+    "location": "examples/generated/threaded_assembly.html#DofHandler-1",
+    "page": "Threaded Assembly",
+    "title": "DofHandler",
+    "category": "section",
+    "text": "function create_dofhandler(grid::Grid{dim}) where {dim}\n    dh = DofHandler(grid)\n    push!(dh, :u, dim) # Add a displacement field\n    close!(dh)\nend;"
+},
+
+{
+    "location": "examples/generated/threaded_assembly.html#Stiffness-tensor-for-linear-elasticity-1",
+    "page": "Threaded Assembly",
+    "title": "Stiffness tensor for linear elasticity",
+    "category": "section",
+    "text": "function create_stiffness(::Val{dim}) where {dim}\n    E = 200e9\n    ν = 0.3\n    λ = E*ν / ((1+ν) * (1 - 2ν))\n    μ = E / (2(1+ν))\n    δ(i,j) = i == j ? 1.0 : 0.0\n    g(i,j,k,l) = λ*δ(i,j)*δ(k,l) + μ*(δ(i,k)*δ(j,l) + δ(i,l)*δ(j,k))\n    C = SymmetricTensor{4, dim}(g);\n    return C\nend;"
+},
+
+{
+    "location": "examples/generated/threaded_assembly.html#Threaded-data-structures-1",
+    "page": "Threaded Assembly",
+    "title": "Threaded data structures",
+    "category": "section",
+    "text": "ScratchValues is a thread-local collection of data that each thread needs to own, since we need to be able to mutate the data in the threads independentlystruct ScratchValues{T, CV <: CellValues, FV <: FaceValues, TT <: AbstractTensor, dim, Ti}\n    Ke::Matrix{T}\n    fe::Vector{T}\n    cellvalues::CV\n    facevalues::FV\n    global_dofs::Vector{Int}\n    ɛ::Vector{TT}\n    coordinates::Vector{Vec{dim, T}}\n    assembler::JuAFEM.AssemblerSparsityPattern{T, Ti}\nend;Each thread need its own CellValues and FaceValues (although, for this example we don\'t use the FaceValues)function create_values(refshape, dim, order::Int)\n    # Interpolations and values\n    interpolation_space = Lagrange{dim, refshape, 1}()\n    quadrature_rule = QuadratureRule{dim, refshape}(order)\n    face_quadrature_rule = QuadratureRule{dim-1, refshape}(order)\n    cellvalues = [CellVectorValues(quadrature_rule, interpolation_space) for i in 1:Threads.nthreads()];\n    facevalues = [FaceVectorValues(face_quadrature_rule, interpolation_space) for i in 1:Threads.nthreads()];\n    return cellvalues, facevalues\nend;Create a ScratchValues for each thread with the thread local datafunction create_scratchvalues(K, f, dh::DofHandler{dim}) where {dim}\n    nthreads = Threads.nthreads()\n    assemblers = [start_assemble(K, f) for i in 1:nthreads]\n    cellvalues, facevalues = create_values(RefCube, dim, 2)\n\n    n_basefuncs = getnbasefunctions(cellvalues[1])\n    global_dofs = [zeros(Int, ndofs_per_cell(dh)) for i in 1:nthreads]\n\n    fes = [zeros(n_basefuncs) for i in 1:nthreads] # Local force vector\n    Kes = [zeros(n_basefuncs, n_basefuncs) for i in 1:nthreads]\n\n    ɛs = [[zero(SymmetricTensor{2, dim}) for i in 1:n_basefuncs] for i in 1:nthreads]\n\n    coordinates = [[zero(Vec{dim}) for i in 1:length(dh.grid.cells[1].nodes)] for i in 1:nthreads]\n\n    return [ScratchValues(Kes[i], fes[i], cellvalues[i], facevalues[i], global_dofs[i],\n                         ɛs[i], coordinates[i], assemblers[i]) for i in 1:nthreads]\nend;"
+},
+
+{
+    "location": "examples/generated/threaded_assembly.html#Threaded-assemble-1",
+    "page": "Threaded Assembly",
+    "title": "Threaded assemble",
+    "category": "section",
+    "text": "The assembly function loops over each color and does a threaded assembly for that colorfunction doassemble(K::SparseMatrixCSC, colors, grid::Grid, dh::DofHandler, C::SymmetricTensor{4, dim}) where {dim}\n\n    f = zeros(ndofs(dh))\n    scratches = create_scratchvalues(K, f, dh)\n    b = Vec{3}((0.0, 0.0, 0.0)) # Body force\n\n    for color in colors\n        # Each color is safe to assemble threaded\n        Threads.@threads for i in 1:length(color)\n            assemble_cell!(scratches[Threads.threadid()], color[i], K, grid, dh, C, b)\n        end\n    end\n\n    return K, f\nendThe cell assembly function is written the same way as if it was a single threaded example. The only difference is that we unpack the variables from our scratch.function assemble_cell!(scratch::ScratchValues, cell::Int, K::SparseMatrixCSC,\n                        grid::Grid, dh::DofHandler, C::SymmetricTensor{4, dim}, b::Vec{dim}) where {dim}\n\n    # Unpack our stuff from the scratch\n    Ke, fe, cellvalues, facevalues, global_dofs, ɛ, coordinates, assembler =\n         scratch.Ke, scratch.fe, scratch.cellvalues, scratch.facevalues,\n         scratch.global_dofs, scratch.ɛ, scratch.coordinates, scratch.assembler\n\n    fill!(Ke, 0)\n    fill!(fe, 0)\n\n    n_basefuncs = getnbasefunctions(cellvalues)\n\n    # Fill up the coordinates\n    nodeids = grid.cells[cell].nodes\n    for j in 1:length(coordinates)\n        coordinates[j] = grid.nodes[nodeids[j]].x\n    end\n\n    reinit!(cellvalues, coordinates)\n\n    for q_point in 1:getnquadpoints(cellvalues)\n        for i in 1:n_basefuncs\n            ɛ[i] = symmetric(shape_gradient(cellvalues, q_point, i))\n        end\n        dΩ = getdetJdV(cellvalues, q_point)\n        for i in 1:n_basefuncs\n            δu = shape_value(cellvalues, q_point, i)\n            fe[i] += (δu ⋅ b) * dΩ\n            ɛC = ɛ[i] ⊡ C\n            for j in 1:n_basefuncs\n                Ke[i, j] += (ɛC ⊡ ɛ[j]) * dΩ\n            end\n        end\n    end\n\n    celldofs!(global_dofs, dh, cell)\n    assemble!(assembler, global_dofs, fe, Ke)\nend;\n\nfunction run_assemble()\n    refshape = RefCube\n    quadrature_order = 2\n    dim = 3\n    n = 20\n    grid, colors = create_colored_cantilever_grid(Hexahedron, n);\n    dh = create_dofhandler(grid);\n\n    K = create_sparsity_pattern(dh);\n    C = create_stiffness(Val{3}());\n    # compilation\n    doassemble(K, colors, grid, dh, C);\n    b = @elapsed @time K, f = doassemble(K, colors, grid, dh, C);\n    return b\nend\n\nrun_assemble()Running the code with different number of threads give the following runtimes:1 thread  2.46 seconds\n2 threads 1.19 seconds\n3 threads 0.83 seconds\n4 threads 0.75 seconds"
+},
+
+{
+    "location": "examples/generated/threaded_assembly.html#threaded_assembly-plain-program-1",
+    "page": "Threaded Assembly",
+    "title": "Plain Program",
+    "category": "section",
+    "text": "Below follows a version of the program without any comments. The file is also available here: threaded_assembly.jlusing JuAFEM\n\nfunction create_example_2d_grid()\n    grid = generate_grid(Quadrilateral, (10, 10), Vec{2}((0.0, 0.0)), Vec{2}((10.0, 10.0)))\n    cell_colors, colors = JuAFEM.create_coloring(grid)\n    vtk_grid(\"colored\", grid) do vtk\n        JuAFEM.vtk_cell_data_colors(vtk, grid, colors)\n    end\nend;\n\ncreate_example_2d_grid()\n\nfunction create_colored_cantilever_grid(celltype, n)\n    grid = generate_grid(celltype, (10*n, n, n), Vec{3}((0.0, 0.0, 0.0)), Vec{3}((10.0, 1.0, 1.0)))\n    cell_colors, final_colors = JuAFEM.create_coloring(grid)\n    return grid, final_colors\nend;\n\nfunction create_dofhandler(grid::Grid{dim}) where {dim}\n    dh = DofHandler(grid)\n    push!(dh, :u, dim) # Add a displacement field\n    close!(dh)\nend;\n\nfunction create_stiffness(::Val{dim}) where {dim}\n    E = 200e9\n    ν = 0.3\n    λ = E*ν / ((1+ν) * (1 - 2ν))\n    μ = E / (2(1+ν))\n    δ(i,j) = i == j ? 1.0 : 0.0\n    g(i,j,k,l) = λ*δ(i,j)*δ(k,l) + μ*(δ(i,k)*δ(j,l) + δ(i,l)*δ(j,k))\n    C = SymmetricTensor{4, dim}(g);\n    return C\nend;\n\nstruct ScratchValues{T, CV <: CellValues, FV <: FaceValues, TT <: AbstractTensor, dim, Ti}\n    Ke::Matrix{T}\n    fe::Vector{T}\n    cellvalues::CV\n    facevalues::FV\n    global_dofs::Vector{Int}\n    ɛ::Vector{TT}\n    coordinates::Vector{Vec{dim, T}}\n    assembler::JuAFEM.AssemblerSparsityPattern{T, Ti}\nend;\n\nfunction create_values(refshape, dim, order::Int)\n    # Interpolations and values\n    interpolation_space = Lagrange{dim, refshape, 1}()\n    quadrature_rule = QuadratureRule{dim, refshape}(order)\n    face_quadrature_rule = QuadratureRule{dim-1, refshape}(order)\n    cellvalues = [CellVectorValues(quadrature_rule, interpolation_space) for i in 1:Threads.nthreads()];\n    facevalues = [FaceVectorValues(face_quadrature_rule, interpolation_space) for i in 1:Threads.nthreads()];\n    return cellvalues, facevalues\nend;\n\nfunction create_scratchvalues(K, f, dh::DofHandler{dim}) where {dim}\n    nthreads = Threads.nthreads()\n    assemblers = [start_assemble(K, f) for i in 1:nthreads]\n    cellvalues, facevalues = create_values(RefCube, dim, 2)\n\n    n_basefuncs = getnbasefunctions(cellvalues[1])\n    global_dofs = [zeros(Int, ndofs_per_cell(dh)) for i in 1:nthreads]\n\n    fes = [zeros(n_basefuncs) for i in 1:nthreads] # Local force vector\n    Kes = [zeros(n_basefuncs, n_basefuncs) for i in 1:nthreads]\n\n    ɛs = [[zero(SymmetricTensor{2, dim}) for i in 1:n_basefuncs] for i in 1:nthreads]\n\n    coordinates = [[zero(Vec{dim}) for i in 1:length(dh.grid.cells[1].nodes)] for i in 1:nthreads]\n\n    return [ScratchValues(Kes[i], fes[i], cellvalues[i], facevalues[i], global_dofs[i],\n                         ɛs[i], coordinates[i], assemblers[i]) for i in 1:nthreads]\nend;\n\nfunction doassemble(K::SparseMatrixCSC, colors, grid::Grid, dh::DofHandler, C::SymmetricTensor{4, dim}) where {dim}\n\n    f = zeros(ndofs(dh))\n    scratches = create_scratchvalues(K, f, dh)\n    b = Vec{3}((0.0, 0.0, 0.0)) # Body force\n\n    for color in colors\n        # Each color is safe to assemble threaded\n        Threads.@threads for i in 1:length(color)\n            assemble_cell!(scratches[Threads.threadid()], color[i], K, grid, dh, C, b)\n        end\n    end\n\n    return K, f\nend\n\nfunction assemble_cell!(scratch::ScratchValues, cell::Int, K::SparseMatrixCSC,\n                        grid::Grid, dh::DofHandler, C::SymmetricTensor{4, dim}, b::Vec{dim}) where {dim}\n\n    # Unpack our stuff from the scratch\n    Ke, fe, cellvalues, facevalues, global_dofs, ɛ, coordinates, assembler =\n         scratch.Ke, scratch.fe, scratch.cellvalues, scratch.facevalues,\n         scratch.global_dofs, scratch.ɛ, scratch.coordinates, scratch.assembler\n\n    fill!(Ke, 0)\n    fill!(fe, 0)\n\n    n_basefuncs = getnbasefunctions(cellvalues)\n\n    # Fill up the coordinates\n    nodeids = grid.cells[cell].nodes\n    for j in 1:length(coordinates)\n        coordinates[j] = grid.nodes[nodeids[j]].x\n    end\n\n    reinit!(cellvalues, coordinates)\n\n    for q_point in 1:getnquadpoints(cellvalues)\n        for i in 1:n_basefuncs\n            ɛ[i] = symmetric(shape_gradient(cellvalues, q_point, i))\n        end\n        dΩ = getdetJdV(cellvalues, q_point)\n        for i in 1:n_basefuncs\n            δu = shape_value(cellvalues, q_point, i)\n            fe[i] += (δu ⋅ b) * dΩ\n            ɛC = ɛ[i] ⊡ C\n            for j in 1:n_basefuncs\n                Ke[i, j] += (ɛC ⊡ ɛ[j]) * dΩ\n            end\n        end\n    end\n\n    celldofs!(global_dofs, dh, cell)\n    assemble!(assembler, global_dofs, fe, Ke)\nend;\n\nfunction run_assemble()\n    refshape = RefCube\n    quadrature_order = 2\n    dim = 3\n    n = 20\n    grid, colors = create_colored_cantilever_grid(Hexahedron, n);\n    dh = create_dofhandler(grid);\n\n    K = create_sparsity_pattern(dh);\n    C = create_stiffness(Val{3}());\n    # compilation\n    doassemble(K, colors, grid, dh, C);\n    b = @elapsed @time K, f = doassemble(K, colors, grid, dh, C);\n    return b\nend\n\nrun_assemble()"
+},
+
+{
     "location": "reference/quadrature.html#",
     "page": "Quadrature",
     "title": "Quadrature",
