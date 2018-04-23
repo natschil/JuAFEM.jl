@@ -75,3 +75,5 @@ end
 using Base.Test
 @test norm(u) ≈ 3.307743912641305
 
+# This file was generated using Literate.jl, https://github.com/fredrikekre/Literate.jl
+
