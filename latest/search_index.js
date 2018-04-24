@@ -293,7 +293,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Heat Equation",
     "title": "Introduction",
     "category": "section",
-    "text": "The heat equation is the \"Hello, world!\" equation of finite elements. Here we solve the equation on a unit square, with a uniform internal source. The strong form of the (linear) heat equation is given by- nabla cdot (k nabla u) = f  quad x in Omegawhere u is the unknown temperature field, k the heat conductivity, f the heat source and Omega the domain. For simplicity we set f = 1 and k = 1. We will consider homogeneous Dirichlet boundary conditions such thatu(x) = 0 quad x in partial Omegawhere partial Omega denotes the boundary of Omega.The resulting weak form is given byint_Omega nabla v cdot nabla u  dOmega = int_Omega v  dOmegawhere v is a suitable test function."
+    "text": "The heat equation is the \"Hello, world!\" equation of finite elements. Here we solve the equation on a unit square, with a uniform internal source. The strong form of the (linear) heat equation is given by-nabla cdot (k nabla u) = f  quad x in Omegawhere u is the unknown temperature field, k the heat conductivity, f the heat source and Omega the domain. For simplicity we set f = 1 and k = 1. We will consider homogeneous Dirichlet boundary conditions such thatu(x) = 0 quad x in partial Omegawhere partial Omega denotes the boundary of Omega.The resulting weak form is given byint_Omega nabla v cdot nabla u  dOmega = int_Omega v  dOmegawhere v is a suitable test function."
 },
 
 {
