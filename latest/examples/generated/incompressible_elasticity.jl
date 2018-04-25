@@ -177,9 +177,9 @@ quadratic = Lagrange{2,RefTetrahedron,2}()
 u1 = solve(0.4999999, linear, linear)
 u2 = solve(0.4999999, quadratic, linear);
 
-# test the result
-using Base.Test
-@test norm(u2) ≈ 919.2122668839389
+# test the result                  #jl
+using Base.Test                    #jl
+@test norm(u2) ≈ 919.2122668839389 #jl
 
 # This file was generated using Literate.jl, https://github.com/fredrikekre/Literate.jl
 

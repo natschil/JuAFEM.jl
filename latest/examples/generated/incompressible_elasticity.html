@@ -161,7 +161,11 @@ end</code></pre><pre><code class="language-none">solve (generic function with 1 
 quadratic = Lagrange{2,RefTetrahedron,2}()
 
 u1 = solve(0.4999999, linear, linear)
-u2 = solve(0.4999999, quadratic, linear);</code></pre></div><h2><a class="nav-anchor" id="incompressible_elasticity-plain-program-1" href="#incompressible_elasticity-plain-program-1">Plain Program</a></h2><p>Below follows a version of the program without any comments. The file is also available here: <a href="incompressible_elasticity.jl">incompressible_elasticity.jl</a></p><pre><code class="language-julia">using JuAFEM
+u2 = solve(0.4999999, quadratic, linear);
+
+# test the result                  #jl
+using Base.Test                    #jl
+@test norm(u2) ≈ 919.2122668839389 #jl</code></pre><pre><code class="language-none">Test Passed</code></pre></div><h2><a class="nav-anchor" id="incompressible_elasticity-plain-program-1" href="#incompressible_elasticity-plain-program-1">Plain Program</a></h2><p>Below follows a version of the program without any comments. The file is also available here: <a href="incompressible_elasticity.jl">incompressible_elasticity.jl</a></p><pre><code class="language-julia">using JuAFEM
 using BlockArrays
 
 function create_cook_grid(nx, ny)
@@ -340,8 +344,8 @@ quadratic = Lagrange{2,RefTetrahedron,2}()
 u1 = solve(0.4999999, linear, linear)
 u2 = solve(0.4999999, quadratic, linear);
 
-# test the result
-using Base.Test
-@test norm(u2) ≈ 919.2122668839389
+# test the result                  #jl
+using Base.Test                    #jl
+@test norm(u2) ≈ 919.2122668839389 #jl
 
 # This file was generated using Literate.jl, https://github.com/fredrikekre/Literate.jl</code></pre><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p><footer><hr/><a class="previous" href="heat_equation.html"><span class="direction">Previous</span><span class="title">Heat Equation</span></a><a class="next" href="threaded_assembly.html"><span class="direction">Next</span><span class="title">Threaded Assembly</span></a></footer></article></body></html>

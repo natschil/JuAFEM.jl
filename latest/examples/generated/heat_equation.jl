@@ -71,9 +71,5 @@ vtk_grid("heat_equation", dh) do vtk
     vtk_point_data(vtk, dh, u)
 end
 
-# test the result
-using Base.Test
-@test norm(u) ≈ 3.307743912641305
-
 # This file was generated using Literate.jl, https://github.com/fredrikekre/Literate.jl
 
