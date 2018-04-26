@@ -103,12 +103,7 @@ end;</code></pre></div><p>The element routine integrates the local stiffness and
         end
     end
 
-    symmetrize_lower!(Ke)
-
-    #&#39; We integrate the Neumann boundary using the facevalues.
-    #&#39; We loop over all the faces in the cell, then check if the face
-    #&#39; is in our `&quot;traction&quot;` faceset.
-    @inbounds for face in 1:nfaces(cell)
+    symmetrize_lower!(Ke)</code></pre></div><p>We integrate the Neumann boundary using the facevalues. We loop over all the faces in the cell, then check if the face is in our <code>&quot;traction&quot;</code> faceset.</p><div><pre><code class="language-julia">    @inbounds for face in 1:nfaces(cell)
         if onboundary(cell, face) &amp;&amp; (cellid(cell), face) ∈ getfaceset(grid, &quot;traction&quot;)
             reinit!(facevalues_u, cell, face)
             for q_point in 1:getnquadpoints(facevalues_u)

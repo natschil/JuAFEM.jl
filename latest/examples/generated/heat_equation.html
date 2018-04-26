@@ -47,42 +47,12 @@ spy(K)</code></pre><pre><code class="language-none">                            
        1                                                                    441
                                       nz = 3721</code></pre></div><h3><a class="nav-anchor" id="Boundary-conditions-1" href="#Boundary-conditions-1">Boundary conditions</a></h3><p>In JuAFEM constraints like Dirichlet boundary conditions are handled by a <code>ConstraintHandler</code>.</p><div><pre><code class="language-julia">ch = ConstraintHandler(dh);</code></pre></div><p>Next we need to add constraints to <code>ch</code>. For this problem we define homogeneous Dirichlet boundary conditions on the whole boundary, i.e. the <code>union</code> of all the face sets on the boundary.</p><div><pre><code class="language-julia">∂Ω = union(getfaceset.(grid, [&quot;left&quot;, &quot;right&quot;, &quot;top&quot;, &quot;bottom&quot;])...);</code></pre></div><p>Now we are set up to define our constraint. We specify which field the condition is for, and our combined face set <code>∂Ω</code>. The last argument is a function which takes the spatial coordinate <span>$x$</span> and the current time <span>$t$</span> and returns the prescribed value. In this case it is trivial – no matter what <span>$x$</span> and <span>$t$</span> we return <span>$0$</span>. When we have specified our constraint we <code>add!</code> it to <code>ch</code>.</p><div><pre><code class="language-julia">dbc = Dirichlet(:u, ∂Ω, (x, t) -&gt; 0)
 add!(ch, dbc);</code></pre></div><p>We also need to <code>close!</code> and <code>update!</code> our boundary conditions. When we call <code>close!</code> the dofs which will be constrained by the boundary conditions are calculated and stored in our <code>ch</code> object. Since the boundary conditions are, in this case, independent of time we can <code>update!</code> them directly with e.g. <span>$t = 0$</span>.</p><div><pre><code class="language-julia">close!(ch)
-update!(ch, 0.0);</code></pre></div><h3><a class="nav-anchor" id="Assembling-the-linear-system-1" href="#Assembling-the-linear-system-1">Assembling the linear system</a></h3><p>Now we have all the pieces needed to assemble the linear system, <span>$K u = f$</span>. We define a function, <code>doassemble</code> to do the assembly, which takes our <code>cellvalues</code>, the sparse matrix and our DofHandler as input arguments. The function returns the assembled stiffness matrix, and the force vector.</p><div><pre><code class="language-julia">function doassemble(cellvalues::CellScalarValues{dim}, K::SparseMatrixCSC, dh::DofHandler) where {dim}
-    #&#39; We allocate the element stiffness matrix and element force vector
-    #&#39; just once before looping over all the cells instead of allocating
-    #&#39; them every time in the loop.
-    n_basefuncs = getnbasefunctions(cellvalues)
+update!(ch, 0.0);</code></pre></div><h3><a class="nav-anchor" id="Assembling-the-linear-system-1" href="#Assembling-the-linear-system-1">Assembling the linear system</a></h3><p>Now we have all the pieces needed to assemble the linear system, <span>$K u = f$</span>. We define a function, <code>doassemble</code> to do the assembly, which takes our <code>cellvalues</code>, the sparse matrix and our DofHandler as input arguments. The function returns the assembled stiffness matrix, and the force vector.</p><div><pre><code class="language-julia">function doassemble(cellvalues::CellScalarValues{dim}, K::SparseMatrixCSC, dh::DofHandler) where {dim}</code></pre></div><p>We allocate the element stiffness matrix and element force vector just once before looping over all the cells instead of allocating them every time in the loop.</p><div><pre><code class="language-julia">    n_basefuncs = getnbasefunctions(cellvalues)
     Ke = zeros(n_basefuncs, n_basefuncs)
-    fe = zeros(n_basefuncs)
-
-    #&#39; Next we define the global force vector `f` and use that and
-    #&#39; the stiffness matrix `K` and create an assembler. The assembler
-    #&#39; is just a thin wrapper around `f` and `K` and some extra storage
-    #&#39; to make the assembling faster.
-    f = zeros(ndofs(dh))
-    assembler = start_assemble(K, f)
-
-    #&#39; It is now time to loop over all the cells in our grid. We do this by iterating
-    #&#39; over a `CellIterator`. The iterator caches some useful things for us, for example
-    #&#39; the nodal coordinates for the cell, and the local degrees of freedom.
-    @inbounds for cell in CellIterator(dh)
-        #&#39; Always remember to reset the element stiffness matrix and
-        #&#39; force vector since we reuse them for all elements.
-        fill!(Ke, 0)
-        fill!(fe, 0)
-
-        #&#39; For each cell we also need to reinitialize the cached values in `cellvalues`.
-        reinit!(cellvalues, cell)
-
-        #&#39; It is now time to loop over all the quadrature points in the cell and
-        #&#39; assemble the contribution to `Ke` and `fe`. The integration weight
-        #&#39; can be queried from `cellvalues` by `getdetJdV`.
-        for q_point in 1:getnquadpoints(cellvalues)
-            dΩ = getdetJdV(cellvalues, q_point)
-            #&#39; For each quadrature point we loop over all the (local) shape functions.
-            #&#39; We need the value and gradient of the testfunction `v` and also the gradient
-            #&#39; of the trial function `u`. We get all of these from `cellvalues`.
-            for i in 1:n_basefuncs
+    fe = zeros(n_basefuncs)</code></pre></div><p>Next we define the global force vector <code>f</code> and use that and the stiffness matrix <code>K</code> and create an assembler. The assembler is just a thin wrapper around <code>f</code> and <code>K</code> and some extra storage to make the assembling faster.</p><div><pre><code class="language-julia">    f = zeros(ndofs(dh))
+    assembler = start_assemble(K, f)</code></pre></div><p>It is now time to loop over all the cells in our grid. We do this by iterating over a <code>CellIterator</code>. The iterator caches some useful things for us, for example the nodal coordinates for the cell, and the local degrees of freedom.</p><div><pre><code class="language-julia">    @inbounds for cell in CellIterator(dh)</code></pre></div><p>Always remember to reset the element stiffness matrix and force vector since we reuse them for all elements.</p><div><pre><code class="language-julia">        fill!(Ke, 0)
+        fill!(fe, 0)</code></pre></div><p>For each cell we also need to reinitialize the cached values in <code>cellvalues</code>.</p><div><pre><code class="language-julia">        reinit!(cellvalues, cell)</code></pre></div><p>It is now time to loop over all the quadrature points in the cell and assemble the contribution to <code>Ke</code> and <code>fe</code>. The integration weight can be queried from <code>cellvalues</code> by <code>getdetJdV</code>.</p><div><pre><code class="language-julia">        for q_point in 1:getnquadpoints(cellvalues)
+            dΩ = getdetJdV(cellvalues, q_point)</code></pre></div><p>For each quadrature point we loop over all the (local) shape functions. We need the value and gradient of the testfunction <code>v</code> and also the gradient of the trial function <code>u</code>. We get all of these from <code>cellvalues</code>.</p><div><pre><code class="language-julia">            for i in 1:n_basefuncs
                 v  = shape_value(cellvalues, q_point, i)
                 ∇v = shape_gradient(cellvalues, q_point, i)
                 fe[i] += v * dΩ
@@ -91,11 +61,7 @@ update!(ch, 0.0);</code></pre></div><h3><a class="nav-anchor" id="Assembling-the
                     Ke[i, j] += (∇v ⋅ ∇u) * dΩ
                 end
             end
-        end
-
-        #&#39; The last step in the element loop is to assemble `Ke` and `fe`
-        #&#39; into the global `K` and `f` with `assemble!`.
-        assemble!(assembler, celldofs(cell), fe, Ke)
+        end</code></pre></div><p>The last step in the element loop is to assemble <code>Ke</code> and <code>fe</code> into the global <code>K</code> and <code>f</code> with <code>assemble!</code>.</p><div><pre><code class="language-julia">        assemble!(assembler, celldofs(cell), fe, Ke)
     end
     return K, f
 end</code></pre></div><h3><a class="nav-anchor" id="Solution-of-the-system-1" href="#Solution-of-the-system-1">Solution of the system</a></h3><p>The last step is to solve the system. First we call <code>doassemble</code> to obtain the global stiffness matrix <code>K</code> and force vector <code>f</code>.</p><div><pre><code class="language-julia">K, f = doassemble(cellvalues, K, dh);</code></pre></div><p>To account for the boundary conditions we use the <code>apply!</code> function. This modifies elements in <code>K</code> and <code>f</code> respectively, such that we can get the correct solution vector <code>u</code> by using <code>\</code>.</p><div><pre><code class="language-julia">apply!(K, f, ch)
