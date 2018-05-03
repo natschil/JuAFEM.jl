@@ -15,7 +15,7 @@ K = create_sparsity_pattern(dh);
 
 using UnicodePlots
 fill!(K.nzval, 1.0)
-spy(K)
+spy(K; height = 15)
 
 ch = ConstraintHandler(dh);
 
