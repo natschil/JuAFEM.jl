@@ -158,7 +158,7 @@ quadratic = Lagrange{2,RefTetrahedron,2}()
 u1 = solve(0.4999999, linear, linear)
 u2 = solve(0.4999999, quadratic, linear);
 
-# test the result                  #jl
+# test the result                 #jl
 using Base.Test                    #jl
 @test norm(u2) ≈ 919.2122668839389 #jl</code></pre><pre><code class="language-none">Test Passed</code></pre></div><h2><a class="nav-anchor" id="incompressible_elasticity-plain-program-1" href="#incompressible_elasticity-plain-program-1">Plain Program</a></h2><p>Below follows a version of the program without any comments. The file is also available here: <a href="incompressible_elasticity.jl">incompressible_elasticity.jl</a></p><pre><code class="language-julia">using JuAFEM
 using BlockArrays
@@ -339,7 +339,7 @@ quadratic = Lagrange{2,RefTetrahedron,2}()
 u1 = solve(0.4999999, linear, linear)
 u2 = solve(0.4999999, quadratic, linear);
 
-# test the result                  #jl
+# test the result                 #jl
 using Base.Test                    #jl
 @test norm(u2) ≈ 919.2122668839389 #jl
 
