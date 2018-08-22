@@ -20,7 +20,7 @@
 #md # The full program, without comments, can be found in the next
 #md # [section](@ref incompressible_elasticity-plain-program).
 using JuAFEM
-using BlockArrays
+using BlockArrays, SparseArrays, LinearAlgebra
 
 # First we generate a simple grid, specifying the 4 corners of Cooks membrane.
 function create_cook_grid(nx, ny)
@@ -223,7 +223,7 @@ u1 = solve(0.4999999, linear, linear)
 u2 = solve(0.4999999, quadratic, linear);
 
 ## test the result                 #jl
-using Base.Test                    #jl
+using Test                         #jl
 @test norm(u2) ≈ 919.2122668839389 #jl
 
 #md # ## [Plain Program](@id incompressible_elasticity-plain-program)

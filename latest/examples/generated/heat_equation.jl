@@ -1,4 +1,4 @@
-using JuAFEM
+using JuAFEM, SparseArrays
 
 grid = generate_grid(Quadrilateral, (20, 20));
 
@@ -19,7 +19,7 @@ spy(K; height = 15)
 
 ch = ConstraintHandler(dh);
 
-∂Ω = union(getfaceset.(grid, ["left", "right", "top", "bottom"])...);
+∂Ω = union(getfaceset.((grid, ), ["left", "right", "top", "bottom"])...);
 
 dbc = Dirichlet(:u, ∂Ω, (x, t) -> 0)
 add!(ch, dbc);

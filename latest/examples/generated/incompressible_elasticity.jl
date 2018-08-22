@@ -1,5 +1,5 @@
 using JuAFEM
-using BlockArrays
+using BlockArrays, SparseArrays, LinearAlgebra
 
 function create_cook_grid(nx, ny)
     corners = [Vec{2}((0.0,   0.0)),
@@ -178,7 +178,7 @@ u1 = solve(0.4999999, linear, linear)
 u2 = solve(0.4999999, quadratic, linear);
 
 # test the result                 #jl
-using Base.Test                    #jl
+using Test                         #jl
 @test norm(u2) ≈ 919.2122668839389 #jl
 
 # This file was generated using Literate.jl, https://github.com/fredrikekre/Literate.jl
